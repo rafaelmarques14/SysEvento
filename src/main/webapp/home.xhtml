@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+   <title>Home</title>
+   <style>
+      .button-container {
+         display: flex;
+         gap: 10px; /* Espaço entre os botões */
+      }
+   </style>
+</h:head>
+<h:body>
+   <div class="card">
+      <h:form id="menuForm">
+         <p:growl id="messages" autoUpdate="true"/>
+
+         <p:menubar hideDelay="1000">
+
+            <p:submenu label="Users" icon="pi pi-fw pi-user">
+               <p:menuitem value="Remover" icon="pi pi-fw pi-user-minus" onclick="PF('dlgRemover').show();" type="button"/>
+               <p:menuitem value="Atualizar" icon="pi pi-fw pi-user-edit" onclick="PF('dlgAtualizar').show();" type="button"/>
+            </p:submenu>
+
+            <p:submenu label="Evento" icon="pi pi-fw pi-calendar">
+               <p:menuitem value="Cadastrar" icon="pi pi-fw pi-plus" onclick="PF('dlgCadastrarEvento').show();" type="button"/>
+            </p:submenu>
+
+            <p:divider layout="vertical"/>
+
+            <p:menuitem value="Logout" action="#{usuarioController.logout}" icon="pi pi-sign-out"/>
+         </p:menubar>
+      </h:form>
+   </div>
+</h:body>
+</html>

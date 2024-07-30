@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+   <title>Login</title>
+   <style>
+      body {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 100vh;
+         margin: 0;
+      }
+      .login-panel {
+         width: 300px;
+      }
+   </style>
+</h:head>
+<h:body>
+   <h:form id="loginForm">
+      <p:panel header="Login" styleClass="login-panel">
+         <p:messages id="messages" showDetail="true" autoUpdate="true" />
+         <h:panelGrid columns="2">
+            <h:outputLabel for="emailLogin" value="Email:" />
+            <p:inputText id="emailLogin" value="#{usuarioController.emailLogin}"  />
+
+            <h:outputLabel for="senhaLogin" value="Senha:" />
+            <p:password id="senhaLogin" value="#{usuarioController.senhaLogin}" />
+
+            <h:outputLabel />
+            <p:commandButton value="Login" action="#{usuarioController.login}" icon="pi pi-sign-in" update="messages" />
+
+            <h:outputLabel />
+            <h:panelGroup>
+               <h:outputText value="Não é cadastrado? " />
+               <p:commandButton value="Cadastrar" onclick="PF('dlgCadastro').show();" icon="pi pi-user-plus" styleClass="ui-button-flat" type="button"/>
+            </h:panelGroup>
+         </h:panelGrid>
+      </p:panel>
+   </h:form>
+
+   <!-- Modal de Cadastro -->
+   <p:dialog header="Cadastro de Usuário" widgetVar="dlgCadastro" modal="true" closable="true" resizable="false">
+      <h:form id="cadastroForm">
+         <p:messages id="cadastroMessages" showDetail="true" autoUpdate="true" />
+         <h:panelGrid columns="2">
+            <h:outputLabel for="nome" value="Nome: " />
+            <p:inputText id="nome" value="#{usuarioController.usuario.nome}" required="true" requiredMessage="Digite o nome." />
+
+            <h:outputLabel for="email" value="Email: " />
+            <p:inputText id="email" value="#{usuarioController.usuario.email}" required="true" requiredMessage="Digite o email." />
+
+            <h:outputLabel for="senha" value="Senha: " />
+            <p:password id="senha" value="#{usuarioController.usuario.senha}" required="true" requiredMessage="Digite a senha." />
+
+            <h:outputLabel />
+            <p:commandButton value="Cadastrar" action="#{usuarioController.adicionarUsuario}" update="cadastroMessages" oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
+         </h:panelGrid>
+      </h:form>
+   </p:dialog>
+
+</h:body>
+</html>

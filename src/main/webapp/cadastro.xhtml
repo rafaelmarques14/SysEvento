@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+   <title>Cadastro de Usuário</title>
+</h:head>
+<h:body>
+   <h:form>
+      <h:panelGrid columns="2">
+         <h:outputLabel for="nome" value="Nome:" />
+         <h:inputText id="nome" value="#{usuarioController.usuario.nome}" />
+
+         <h:outputLabel for="email" value="Email:" />
+         <h:inputText id="email" value="#{usuarioController.usuario.email}" />
+
+         <h:outputLabel for="senha" value="Senha:" />
+         <h:inputSecret id="senha" value="#{usuarioController.usuario.senha}" />
+      </h:panelGrid>
+      <h:commandButton value="Cadastrar" action="#{usuarioController.adicionarUsuario}" />
+      <h:commandButton value="Cancelar" action="login.xhtml" />
+   </h:form>
+</h:body>
+</html>
