@@ -14,10 +14,6 @@
          <p:column headerText="Email">
             <h:outputText value="#{user.email}" />
          </p:column>
-         <p:column>
-            <p:commandButton value="Editar" action="#{usuarioController.editar(user)}" />
-            <p:commandButton value="Remover" action="#{usuarioController.remover(user.id)}" />
-         </p:column>
       </p:dataTable>
    </h:form>
 </h:body>

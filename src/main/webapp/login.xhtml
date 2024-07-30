@@ -55,7 +55,7 @@
             <p:password id="senha" value="#{usuarioController.usuario.senha}" required="true" requiredMessage="Digite a senha." />
 
             <h:outputLabel />
-            <p:commandButton value="Cadastrar" action="#{usuarioController.adicionarUsuario}" update="cadastroMessages" oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
+            <p:commandButton value="Cadastrar" action="#{usuarioController.adicionarUsuario()}" update="cadastroMessages" oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
          </h:panelGrid>
       </h:form>
    </p:dialog>

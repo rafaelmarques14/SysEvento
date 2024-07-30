@@ -16,12 +16,14 @@ public class UsuarioSessionBean {
         }
     }
 
-    public void atualizarUsuario(Usuario usuario) {
-        for (Usuario u : usuarios) {
-            if (u.getId().equals(usuario.getId())) {
-                u.setNome(usuario.getNome());
-                u.setEmail(usuario.getEmail());
-                u.setSenha(usuario.getSenha());
+    public void atualizarUsuario(Usuario usuarioAtualizado) {
+        for (int i = 0; i < usuarios.size(); i++) {
+            Usuario u = usuarios.get(i);
+            if (u.getEmail().equals(usuarioAtualizado.getEmail())) {
+                // Atualiza as informações do usuário
+                u.setNome(usuarioAtualizado.getNome());
+                u.setEmail(usuarioAtualizado.getEmail());
+                u.setSenha(usuarioAtualizado.getSenha());
                 break;
             }
         }

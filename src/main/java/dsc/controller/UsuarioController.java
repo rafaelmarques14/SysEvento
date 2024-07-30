@@ -5,7 +5,6 @@ import dsc.model.UsuarioSessionBean;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpSession;
@@ -28,11 +27,12 @@ public class UsuarioController implements Serializable {
     public String login() {
         Usuario usuarioLogado = usuarioSessionBean.buscarUsuarioPeloEmail(emailLogin);
         if (usuarioLogado != null && usuarioLogado.getSenha().equals(senhaLogin)) {
+            usuario = usuarioLogado; // Configura o usuário atual
             loggedIn = true;
-            return "home?faces-redirect=true"; // Redirecionar para a página principal após login
+            return "home?faces-redirect=true"; // Redireciona para a página principal após login
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Email ou senha inválidos."));
-            return null; // Ficar na mesma página
+            return null; // Fica na mesma página
         }
     }
 
@@ -43,7 +43,8 @@ public class UsuarioController implements Serializable {
             session.invalidate();
         }
         loggedIn = false;
-        return "login.xhtml?faces-redirect=true"; // Redirecionar para a página de login após logout
+        usuario = new Usuario(); // Limpa o usuário atual
+        return "login.xhtml?faces-redirect=true"; // Redireciona para a página de login após logout
     }
 
     public void adicionarUsuario() {
@@ -52,8 +53,15 @@ public class UsuarioController implements Serializable {
     }
 
     public void atualizarUsuario() {
-        usuarioSessionBean.atualizarUsuario(usuario);
-        // Redirecionar ou mostrar mensagem de sucesso
+        if (loggedIn) {
+            usuarioSessionBean.atualizarUsuario(usuario);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Usuário atualizado com sucesso."));
+            usuario = new Usuario(); // Limpa o formulário após a atualização
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Você precisa estar logado para atualizar o usuário."));
+        }
     }
 
     public void removerUsuario() {

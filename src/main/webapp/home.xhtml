@@ -56,6 +56,26 @@
          </h:form>
       </p:confirmDialog>
 
+      <!-- Modal de Atualizar Usuário -->
+      <p:dialog header="Atualizar Usuário" widgetVar="dlgAtualizar" modal="true" closable="true" resizable="false">
+         <h:form id="atualizarForm">
+            <p:messages id="atualizarMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="emailAtualizar" value="Email: " />
+               <p:inputText id="emailAtualizar" value="#{usuarioController.usuario.email}" required="true" requiredMessage="Digite o email." />
+
+               <h:outputLabel for="nomeAtualizar" value="Nome: " />
+               <p:inputText id="nomeAtualizar" value="#{usuarioController.usuario.nome}" required="true" requiredMessage="Digite o nome." />
+
+               <h:outputLabel for="senhaAtualizar" value="Senha: " />
+               <p:password id="senhaAtualizar" value="#{usuarioController.usuario.senha}" />
+
+               <h:outputLabel />
+               <p:commandButton value="Atualizar" action="#{usuarioController.atualizarUsuario()}" update=":menuForm:messages, :atualizarForm:atualizarMessages" oncomplete="PF('dlgAtualizar').hide();" />
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
    </div>
 </h:body>
 </html>
