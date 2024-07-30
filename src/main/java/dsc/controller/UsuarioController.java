@@ -2,17 +2,19 @@ package dsc.controller;
 
 import dsc.model.Usuario;
 import dsc.model.UsuarioSessionBean;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpSession;
-
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
 @Named
-@ViewScoped
+@SessionScoped
 public class UsuarioController implements Serializable {
 
     @EJB
@@ -24,12 +26,12 @@ public class UsuarioController implements Serializable {
     private boolean loggedIn = false;
 
     public String login() {
-        Usuario usuarioLogado = usuarioSessionBean.buscarUsuarioPorEmail(emailLogin);
+        Usuario usuarioLogado = usuarioSessionBean.buscarUsuarioPeloEmail(emailLogin);
         if (usuarioLogado != null && usuarioLogado.getSenha().equals(senhaLogin)) {
             loggedIn = true;
             return "home?faces-redirect=true"; // Redirecionar para a página principal após login
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new jakarta.faces.application.FacesMessage("Email ou senha inválidos."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Email ou senha inválidos."));
             return null; // Ficar na mesma página
         }
     }
@@ -54,9 +56,20 @@ public class UsuarioController implements Serializable {
         // Redirecionar ou mostrar mensagem de sucesso
     }
 
-    public void removerUsuario(Long id) {
-        usuarioSessionBean.removerUsuario(id);
-        // Redirecionar ou mostrar mensagem de sucesso
+    public void removerUsuario() {
+        if (emailLogin != null && !emailLogin.isEmpty()) {
+            usuarioSessionBean.removerUsuario(emailLogin);
+            emailLogin = null; // Limpa o campo após remoção
+            loggedIn = false; // Desloga o usuário após a remoção
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Usuário removido com sucesso. Você será deslogado."));
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml"); // Redireciona para a página de login
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public List<Usuario> listarUsuarios() {

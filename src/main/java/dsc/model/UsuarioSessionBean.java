@@ -1,6 +1,5 @@
 package dsc.model;
 
-import dsc.model.Usuario;
 import jakarta.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,10 @@ public class UsuarioSessionBean {
     private List<Usuario> usuarios = new ArrayList<>();
 
     public void adicionarUsuario(Usuario usuario) {
-        usuarios.add(usuario);
+        if (usuario != null && usuario.getEmail() != null){
+            usuarios.add(usuario);
+            usuario = new Usuario(); // Limpa o formulário após o cadastro
+        }
     }
 
     public void atualizarUsuario(Usuario usuario) {
@@ -25,18 +27,17 @@ public class UsuarioSessionBean {
         }
     }
 
-    public void removerUsuario(Long id) {
-        usuarios.removeIf(u -> u.getId().equals(id));
+    public void removerUsuario(String email) {
+        usuarios.removeIf(u -> u.getEmail().equals(email));
     }
 
-    public Usuario buscarUsuarioPorEmail(String email) {
-        for (Usuario u : usuarios) {
-            if (u.getEmail().equals(email)) {
-                return u;
-            }
-        }
-        return null;
+    public Usuario buscarUsuarioPeloEmail(String email) {
+        return usuarios.stream()
+                .filter(u -> u.getEmail().equals(email))
+                .findFirst()
+                .orElse(null);
     }
+
 
     public List<Usuario> listarUsuarios() {
         return usuarios;

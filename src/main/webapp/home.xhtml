@@ -33,6 +33,29 @@
             <p:menuitem value="Logout" action="#{usuarioController.logout}" icon="pi pi-sign-out"/>
          </p:menubar>
       </h:form>
+
+      <!-- Modal de Remover Usuário -->
+      <p:dialog header="Remover Usuário" widgetVar="dlgRemover" modal="true" closable="true" resizable="false">
+         <h:form id="removerForm">
+            <p:messages id="removerMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="emailRemover" value="Email: " />
+               <p:inputText id="emailRemover" value="#{usuarioController.emailLogin}" required="true" requiredMessage="Digite o email." />
+
+               <h:outputLabel />
+               <p:commandButton value="Remover" actionListener="#{usuarioController.removerUsuario}" onclick="PF('confirmDialog').show();" update="removerMessages" type="button"/>
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
+      <!-- Diálogo de Confirmação -->
+      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o usuário?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialog">
+         <h:form>
+            <p:commandButton value="Sim" action="#{usuarioController.removerUsuario()}" update=":menuForm:messages, :removerForm:removerMessages" oncomplete="PF('confirmDialog').hide(); PF('dlgRemover').hide();"/>
+            <p:commandButton value="Não" onclick="PF('confirmDialog').hide();" type="button"/>
+         </h:form>
+      </p:confirmDialog>
+
    </div>
 </h:body>
 </html>
