@@ -76,6 +76,67 @@
          </h:form>
       </p:dialog>
 
+      <!-- Modal de Cadastrar Evento -->
+      <p:dialog header="Cadastrar Evento" widgetVar="dlgCadastrarEvento" modal="true" closable="true" resizable="false">
+         <h:form id="cadastrarEventoForm">
+            <p:messages id="cadastrarEventoMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="nomeEvento" value="Nome do Evento: " />
+               <p:inputText id="nomeEvento" value="#{eventoController.evento.nome}" required="true" requiredMessage="Digite o nome do evento." />
+
+               <h:outputLabel for="dataEvento" value="Data do Evento: " />
+               <p:calendar id="dataEvento" value="#{eventoController.evento.data}" pattern="dd/MM/yyyy" required="true" requiredMessage="Digite a data do evento." />
+
+               <h:outputLabel />
+               <p:commandButton value="Cadastrar" action="#{eventoController.cadastrarEvento}" update=":menuForm:messages, :cadastrarEventoForm:cadastrarEventoMessages" oncomplete="PF('dlgCadastrarEvento').hide();" />
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
+      <!-- Modal de Atualizar Evento -->
+      <p:dialog header="Atualizar Evento" widgetVar="dlgAtualizarEvento" modal="true" closable="true" resizable="false">
+         <h:form id="atualizarEventoForm">
+            <p:messages id="atualizarEventoMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="nomeEventoAtualizar" value="Nome do Evento: " />
+               <p:inputText id="nomeEventoAtualizar" value="#{eventoController.evento.nome}" required="true" requiredMessage="Digite o nome do evento." />
+
+               <h:outputLabel for="dataEventoAtualizar" value="Data do Evento: " />
+               <p:calendar id="dataEventoAtualizar" value="#{eventoController.evento.data}" pattern="dd/MM/yyyy" required="true" requiredMessage="Digite a data do evento." />
+
+               <h:outputLabel />
+               <p:commandButton value="Atualizar" action="#{eventoController.atualizarEvento}" update=":menuForm:messages, :atualizarEventoForm:atualizarEventoMessages" oncomplete="PF('dlgAtualizarEvento').hide();" />
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
+
+
+      <!-- Tabela de Eventos -->
+      <h:form id="eventosForm">
+         <p:dataTable id="eventosPanel" value="#{eventoController.eventos}" var="evento" styleClass="data-table" border="1">
+            <p:column headerText="Nome do Evento">
+               <h:outputText value="#{evento.nome}" />
+            </p:column>
+            <p:column headerText="Data do Evento">
+               <h:outputText value="#{evento.data}" />
+            </p:column>
+            <p:column headerText="Ações">
+               <p:commandButton value="Atualizar" icon="pi pi-fw pi-pencil" actionListener="#{eventoController.prepararAtualizacao(evento)}" onclick="PF('dlgAtualizarEvento').show();" update=":atualizarEventoForm"/>
+               <p:commandButton value="Remover" icon="pi pi-fw pi-trash" actionListener="#{eventoController.prepararRemocao(evento)}" onclick="PF('confirmDialog').show();" update=":menuForm:messages, :eventosForm:eventosPanel" styleClass="ui-button-danger"/>
+            </p:column>
+         </p:dataTable>
+      </h:form>
+
+      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o evento?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialog">
+         <h:form>
+            <p:commandButton value="Sim" action="#{eventoController.removerEvento}"
+                             update=":menuForm:messages, :eventosForm:eventosPanel" oncomplete="PF('confirmDialog').hide();"/>
+            <p:commandButton value="Não" onclick="PF('confirmDialog').hide();" type="button"/>
+         </h:form>
+      </p:confirmDialog>
+
+
    </div>
 </h:body>
 </html>
