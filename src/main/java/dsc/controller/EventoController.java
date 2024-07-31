@@ -7,12 +7,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import jakarta.ejb.EJB;
-import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @Named
@@ -25,10 +20,8 @@ public class EventoController implements Serializable {
     private Evento evento = new Evento();
     private List<Evento> eventos; // List to hold the events
 
-    private static final String DATE_FORMAT = "dd/MM/yyyy"; // Definir o formato da data
 
-
-    public void cadastrarEvento() {
+    public String cadastrarEvento() {
         try {
             eventoSessionBean.adicionarEvento(evento);
             eventos = eventoSessionBean.listarEventos();  // Atualiza a lista de eventos
@@ -37,6 +30,7 @@ public class EventoController implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao cadastrar evento.", e.getMessage()));
         }
+        return "home?faces-redirect=true";
     }
 
 
@@ -58,7 +52,7 @@ public class EventoController implements Serializable {
         this.evento = evento; // Configurar o evento para o diálogo de atualização
     }
 
-    public void atualizarEvento() {
+    public String atualizarEvento() {
         // Atualizar o evento na lista
         for (Evento e : eventos) {
             if (e.getNome().equals(evento.getNome())) {
@@ -68,16 +62,9 @@ public class EventoController implements Serializable {
             }
         }
         evento = new Evento(); // Resetar o formulário
+        return "home?faces-redirect=true";
     }
 
-    // Método para formatar a data
-    public String formatarData(Date data) {
-        if (data != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-            return sdf.format(data);
-        }
-        return "";
-    }
 
     public List<Evento> getEventos() {
         if (eventos == null) {

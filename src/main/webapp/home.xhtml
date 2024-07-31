@@ -110,8 +110,6 @@
          </h:form>
       </p:dialog>
 
-
-
       <!-- Tabela de Eventos -->
       <h:form id="eventosForm">
          <p:dataTable id="eventosPanel" value="#{eventoController.eventos}" var="evento" styleClass="data-table" border="1">
@@ -119,7 +117,9 @@
                <h:outputText value="#{evento.nome}" />
             </p:column>
             <p:column headerText="Data do Evento">
-               <h:outputText value="#{evento.data}" />
+               <h:outputText value="#{evento.data}">
+                  <f:convertDateTime pattern="dd/MM/yyyy"/>
+               </h:outputText>
             </p:column>
             <p:column headerText="Ações">
                <p:commandButton value="Atualizar" icon="pi pi-fw pi-pencil" actionListener="#{eventoController.prepararAtualizacao(evento)}" onclick="PF('dlgAtualizarEvento').show();" update=":atualizarEventoForm"/>
@@ -135,8 +135,6 @@
             <p:commandButton value="Não" onclick="PF('confirmDialog').hide();" type="button"/>
          </h:form>
       </p:confirmDialog>
-
-
    </div>
 </h:body>
 </html>
