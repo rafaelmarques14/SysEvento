@@ -5,16 +5,15 @@ import java.util.Date;
 public class Evento {
     private String nome;
     private Date data;
-
+    private Usuario usuario;  // Adiciona o atributo usuario
 
     public Evento() {}
 
-
-    public Evento(String nome, Date data) {
+    public Evento(String nome, Date data, Usuario usuario) {
         this.nome = nome;
         this.data = data;
+        this.usuario = usuario;
     }
-
 
     public String getNome() {
         return nome;
@@ -30,5 +29,13 @@ public class Evento {
 
     public void setData(Date data) {
         this.data = data;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

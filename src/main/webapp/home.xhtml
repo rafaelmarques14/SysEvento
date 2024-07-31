@@ -20,7 +20,7 @@
          <p:menubar hideDelay="1000">
 
             <p:submenu label="Users" icon="pi pi-fw pi-user">
-               <p:menuitem value="Remover" icon="pi pi-fw pi-user-minus" onclick="PF('dlgRemover').show();" type="button"/>
+               <p:menuitem value="Remover" icon="pi pi-fw pi-user-minus" onclick="PF('dlgRemoverUsuario').show();" type="button"/>
                <p:menuitem value="Atualizar" icon="pi pi-fw pi-user-edit" onclick="PF('dlgAtualizar').show();" type="button"/>
             </p:submenu>
 
@@ -35,24 +35,24 @@
       </h:form>
 
       <!-- Modal de Remover Usuário -->
-      <p:dialog header="Remover Usuário" widgetVar="dlgRemover" modal="true" closable="true" resizable="false">
-         <h:form id="removerForm">
-            <p:messages id="removerMessages" showDetail="true" autoUpdate="true" />
+      <p:dialog header="Remover Usuário" widgetVar="dlgRemoverUsuario" modal="true" closable="true" resizable="false">
+         <h:form id="removerUsuarioForm">
+            <p:messages id="removerUsuarioMessages" showDetail="true" autoUpdate="true" />
             <h:panelGrid columns="2">
                <h:outputLabel for="emailRemover" value="Email: " />
                <p:inputText id="emailRemover" value="#{usuarioController.emailLogin}" required="true" requiredMessage="Digite o email." />
 
                <h:outputLabel />
-               <p:commandButton value="Remover" actionListener="#{usuarioController.removerUsuario}" onclick="PF('confirmDialog').show();" update="removerMessages" type="button"/>
+               <p:commandButton value="Remover" actionListener="#{usuarioController.removerUsuario}" onclick="PF('confirmDialogUsuario').show();" update="removerUsuarioMessages" type="button"/>
             </h:panelGrid>
          </h:form>
       </p:dialog>
 
-      <!-- Diálogo de Confirmação -->
-      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o usuário?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialog">
+      <!-- Diálogo de Confirmação de Usuário -->
+      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o usuário?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialogUsuario">
          <h:form>
-            <p:commandButton value="Sim" action="#{usuarioController.removerUsuario()}" update=":menuForm:messages, :removerForm:removerMessages" oncomplete="PF('confirmDialog').hide(); PF('dlgRemover').hide();"/>
-            <p:commandButton value="Não" onclick="PF('confirmDialog').hide();" type="button"/>
+            <p:commandButton value="Sim" action="#{usuarioController.removerUsuario()}" update=":menuForm:messages, :removerUsuarioForm:removerUsuarioMessages" oncomplete="PF('confirmDialogUsuario').hide(); PF('dlgRemoverUsuario').hide();"/>
+            <p:commandButton value="Não" onclick="PF('confirmDialogUsuario').hide();" type="button"/>
          </h:form>
       </p:confirmDialog>
 
@@ -123,16 +123,16 @@
             </p:column>
             <p:column headerText="Ações">
                <p:commandButton value="Atualizar" icon="pi pi-fw pi-pencil" actionListener="#{eventoController.prepararAtualizacao(evento)}" onclick="PF('dlgAtualizarEvento').show();" update=":atualizarEventoForm"/>
-               <p:commandButton value="Remover" icon="pi pi-fw pi-trash" actionListener="#{eventoController.prepararRemocao(evento)}" onclick="PF('confirmDialog').show();" update=":menuForm:messages, :eventosForm:eventosPanel" styleClass="ui-button-danger"/>
+               <p:commandButton value="Remover" icon="pi pi-fw pi-trash" actionListener="#{eventoController.prepararRemocao(evento)}" onclick="PF('confirmDialogEvento').show();" update=":menuForm:messages, :eventosForm:eventosPanel" styleClass="ui-button-danger"/>
             </p:column>
          </p:dataTable>
       </h:form>
 
-      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o evento?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialog">
+      <!-- Diálogo de Confirmação de Evento -->
+      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o evento?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialogEvento">
          <h:form>
-            <p:commandButton value="Sim" action="#{eventoController.removerEvento}"
-                             update=":menuForm:messages, :eventosForm:eventosPanel" oncomplete="PF('confirmDialog').hide();"/>
-            <p:commandButton value="Não" onclick="PF('confirmDialog').hide();" type="button"/>
+            <p:commandButton value="Sim" action="#{eventoController.removerEvento()}" update=":menuForm:messages, :eventosForm:eventosPanel" oncomplete="PF('confirmDialogEvento').hide();"/>
+            <p:commandButton value="Não" onclick="PF('confirmDialogEvento').hide();" type="button"/>
          </h:form>
       </p:confirmDialog>
    </div>
