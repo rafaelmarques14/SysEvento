@@ -2,6 +2,7 @@ package dsc.controller;
 
 import dsc.model.Usuario;
 import dsc.model.UsuarioSessionBean;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -24,11 +25,30 @@ public class UsuarioController implements Serializable {
     private String senhaLogin;
     private boolean loggedIn = false;
 
+    @PostConstruct
+    public void init() {
+        verificarAutenticacao();
+    }
+
+    public void verificarAutenticacao() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+        if (session == null || session.getAttribute("usuarioLogado") == null) {
+            try {
+                facesContext.getExternalContext().redirect("login.xhtml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public String login() {
         Usuario usuarioLogado = usuarioSessionBean.buscarUsuarioPeloEmail(emailLogin);
         if (usuarioLogado != null && usuarioLogado.getSenha().equals(senhaLogin)) {
             usuario = usuarioLogado; // Configura o usuário atual
             loggedIn = true;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+            session.setAttribute("usuarioLogado", usuarioLogado);
             return "home?faces-redirect=true"; // Redireciona para a página principal após login
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Email ou senha inválidos."));
@@ -76,7 +96,6 @@ public class UsuarioController implements Serializable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 

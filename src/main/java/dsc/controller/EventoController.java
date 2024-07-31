@@ -8,8 +8,12 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import jakarta.ejb.EJB;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
 
 @Named
 @SessionScoped
@@ -20,13 +24,25 @@ public class EventoController implements Serializable {
 
     private Evento evento = new Evento();
     private List<Evento> eventos;
-
     private Usuario usuarioAutenticado;
 
-    public EventoController() {
-        // Simula a obtenção do usuário autenticado
-        // Em uma aplicação real, você obteria isso de um serviço de autenticação
-        this.usuarioAutenticado = new Usuario();
+    @PostConstruct
+    public void init() {
+        verificarAutenticacao();
+    }
+
+    private void verificarAutenticacao() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+        if (session == null || session.getAttribute("usuarioLogado") == null) {
+            try {
+                facesContext.getExternalContext().redirect("login.xhtml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            usuarioAutenticado = (Usuario) session.getAttribute("usuarioLogado");
+        }
     }
 
     public String cadastrarEvento() {
