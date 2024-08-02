@@ -1,6 +1,7 @@
 package dsc.controller;
 
 import dsc.model.Usuario;
+import dsc.model.UsuarioRepositorio;
 import dsc.model.UsuarioSessionBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
@@ -45,14 +46,14 @@ public class UsuarioController implements Serializable {
     public String login() {
         Usuario usuarioLogado = usuarioSessionBean.buscarUsuarioPeloEmail(emailLogin);
         if (usuarioLogado != null && usuarioLogado.getSenha().equals(senhaLogin)) {
-            usuario = usuarioLogado; // Configura o usuário atual
+            usuario = usuarioLogado;
             loggedIn = true;
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             session.setAttribute("usuarioLogado", usuarioLogado);
-            return "home?faces-redirect=true"; // Redireciona para a página principal após login
+            return "home?faces-redirect=true";
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Email ou senha inválidos."));
-            return null; // Fica na mesma página
+            return null;
         }
     }
 
@@ -63,13 +64,14 @@ public class UsuarioController implements Serializable {
             session.invalidate();
         }
         loggedIn = false;
-        usuario = new Usuario(); // Limpa o usuário atual
-        return "login.xhtml?faces-redirect=true"; // Redireciona para a página de login após logout
+        usuario = new Usuario();
+        return "login.xhtml?faces-redirect=true";
     }
 
     public void adicionarUsuario() {
         usuarioSessionBean.adicionarUsuario(usuario);
-        // Redirecionar ou mostrar mensagem de sucesso
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Usuário cadastrado com sucesso."));
+        usuario = new Usuario();
     }
 
     public void atualizarUsuario() {
@@ -77,7 +79,7 @@ public class UsuarioController implements Serializable {
             usuarioSessionBean.atualizarUsuario(usuario);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Usuário atualizado com sucesso."));
-            usuario = new Usuario(); // Limpa o formulário após a atualização
+            usuario = new Usuario();
         } else {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "Você precisa estar logado para atualizar o usuário."));
@@ -86,13 +88,13 @@ public class UsuarioController implements Serializable {
 
     public void removerUsuario() {
         if (emailLogin != null && !emailLogin.isEmpty()) {
-            usuarioSessionBean.removerUsuario(emailLogin);
-            emailLogin = null; // Limpa o campo após remoção
-            loggedIn = false; // Desloga o usuário após a remoção
+           usuarioSessionBean.removerUsuario(emailLogin);
+            emailLogin = null;
+            loggedIn = false;
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Usuário removido com sucesso. Você será deslogado."));
             try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml"); // Redireciona para a página de login
+                FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
             } catch (IOException e) {
                 e.printStackTrace();
             }
