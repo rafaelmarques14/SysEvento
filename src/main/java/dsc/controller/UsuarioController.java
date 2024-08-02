@@ -1,7 +1,6 @@
 package dsc.controller;
 
 import dsc.model.Usuario;
-import dsc.model.UsuarioRepositorio;
 import dsc.model.UsuarioSessionBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
@@ -105,7 +104,7 @@ public class UsuarioController implements Serializable {
         return usuarioSessionBean.listarUsuarios();
     }
 
-    // Getters e Setters para o Usuario e campos de login
+
     public Usuario getUsuario() {
         return usuario;
     }
