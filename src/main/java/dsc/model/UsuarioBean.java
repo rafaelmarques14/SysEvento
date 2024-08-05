@@ -15,7 +15,7 @@ public class UsuarioBean {
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
     public void adicionarUsuario(Usuario usuario) throws IllegalArgumentException {
-        validarUsuarioParaCadastro(usuario);
+        validarUsuario(usuario);
         if (usuarioRepositorio.buscarUsuarioPeloEmail(usuario.getEmail()) != null) {
             throw new IllegalArgumentException("Usuário com este email já existe.");
         }
@@ -23,7 +23,7 @@ public class UsuarioBean {
     }
 
     public void atualizarUsuario(Usuario usuarioAtualizado) throws IllegalArgumentException {
-        validarUsuarioParaAtualizacao(usuarioAtualizado);
+        validarUsuario(usuarioAtualizado);
         Usuario usuarioExistente = usuarioRepositorio.buscarUsuarioPeloEmail(usuarioAtualizado.getEmail());
         if (usuarioExistente == null) {
             throw new IllegalArgumentException("Usuário não encontrado.");
@@ -53,7 +53,7 @@ public class UsuarioBean {
         return usuarioRepositorio.listarUsuarios();
     }
 
-    private void validarUsuarioParaCadastro(Usuario usuario) throws IllegalArgumentException {
+    private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
         if (usuario == null) {
             throw new IllegalArgumentException("Usuário não pode ser nulo.");
         }
@@ -68,18 +68,4 @@ public class UsuarioBean {
         }
     }
 
-    private void validarUsuarioParaAtualizacao(Usuario usuario) throws IllegalArgumentException {
-        if (usuario == null) {
-            throw new IllegalArgumentException("Usuário não pode ser nulo.");
-        }
-        if (usuario.getNome() == null || usuario.getNome().isEmpty()) {
-            throw new IllegalArgumentException("Nome é obrigatório.");
-        }
-        if (usuario.getEmail() == null || usuario.getEmail().isEmpty() || !pattern.matcher(usuario.getEmail()).matches()) {
-            throw new IllegalArgumentException("Email inválido.");
-        }
-        if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
-            throw new IllegalArgumentException("Senha é obrigatória.");
-        }
-    }
 }
