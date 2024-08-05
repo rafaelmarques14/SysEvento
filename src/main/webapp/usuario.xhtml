@@ -7,7 +7,7 @@
 </h:head>
 <h:body>
    <h:form>
-      <p:dataTable value="#{usuarioController.listarUsuarios()}" var="user">
+      <p:dataTable value="#{usuarioMB.listarUsuarios()}" var="user">
          <p:column headerText="Nome">
             <h:outputText value="#{user.nome}" />
          </p:column>

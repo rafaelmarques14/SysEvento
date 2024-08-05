@@ -1,7 +1,7 @@
 package dsc.controller;
 
 import dsc.model.Evento;
-import dsc.model.EventoSessionBean;
+import dsc.model.EventoBean;
 import dsc.model.Usuario;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -17,10 +17,10 @@ import jakarta.servlet.http.HttpSession;
 
 @Named
 @SessionScoped
-public class EventoController implements Serializable {
+public class EventoMB implements Serializable {
 
     @EJB
-    private EventoSessionBean eventoSessionBean;
+    private EventoBean eventoBean;
 
     private Evento evento = new Evento();
     private List<Evento> eventos;
@@ -48,8 +48,8 @@ public class EventoController implements Serializable {
     public String cadastrarEvento() {
         try {
             evento.setUsuario(usuarioAutenticado);
-            eventoSessionBean.adicionarEvento(evento);
-            eventos = eventoSessionBean.listarEventos(usuarioAutenticado);
+            eventoBean.adicionarEvento(evento);
+            eventos = eventoBean.listarEventos(usuarioAutenticado);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Evento cadastrado com sucesso."));
             evento = new Evento();
         } catch (Exception e) {
@@ -64,8 +64,8 @@ public class EventoController implements Serializable {
 
     public void removerEvento() {
         try {
-            eventoSessionBean.removerEvento(evento);
-            eventos = eventoSessionBean.listarEventos(usuarioAutenticado);
+            eventoBean.removerEvento(evento);
+            eventos = eventoBean.listarEventos(usuarioAutenticado);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Evento removido com sucesso."));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao remover evento.", e.getMessage()));
@@ -90,7 +90,7 @@ public class EventoController implements Serializable {
 
     public List<Evento> getEventos() {
         if (eventos == null) {
-            eventos = eventoSessionBean.listarEventos(usuarioAutenticado);
+            eventos = eventoBean.listarEventos(usuarioAutenticado);
         }
         return eventos;
     }
