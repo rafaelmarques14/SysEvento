@@ -1,11 +1,24 @@
 package dsc.model;
 
+import jakarta.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "eventos")
 public class Evento {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nome;
+
+    @Temporal(TemporalType.DATE)
     private Date data;
-    private Usuario usuario;  // Adiciona o atributo usuario
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
     public Evento() {}
 
@@ -13,6 +26,14 @@ public class Evento {
         this.nome = nome;
         this.data = data;
         this.usuario = usuario;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {

@@ -1,33 +1,39 @@
 package dsc.model;
 
 import jakarta.ejb.Stateless;
-import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Stateless
 public class EventoRepositorio {
 
-    private List<Evento> eventos = new ArrayList<>();
+    @PersistenceContext(unitName = "eventoPU")
+    private EntityManager entityManager;
 
     public void adicionarEvento(Evento evento) {
-        eventos.add(evento);
+        entityManager.persist(evento);
     }
 
     public void removerEvento(Evento evento) {
-        eventos.removeIf(e -> e.getNome().equals(evento.getNome()) && e.getUsuario().equals(evento.getUsuario()));
+        Evento eventoExistente = encontrarEvento(evento.getNome(), evento.getUsuario());
+        if (eventoExistente != null) {
+            entityManager.merge(eventoExistente);
+        }
     }
 
     public Evento encontrarEvento(String nome, Usuario usuario) {
-        return eventos.stream()
-                .filter(e -> e.getNome().equals(nome) && e.getUsuario().equals(usuario))
+        return entityManager.createQuery("SELECT e FROM Evento e WHERE e.nome = :nome AND e.usuario = :usuario", Evento.class)
+                .setParameter("nome", nome)
+                .setParameter("usuario", usuario)
+                .getResultStream()
                 .findFirst()
                 .orElse(null);
     }
 
     public List<Evento> listarEventos(Usuario usuario) {
-        return eventos.stream()
-                .filter(e -> e.getUsuario().equals(usuario))
-                .collect(Collectors.toList());
+        return entityManager.createQuery("SELECT e FROM Evento e WHERE e.usuario = :usuario", Evento.class)
+                .setParameter("usuario", usuario)
+                .getResultList();
     }
 }
