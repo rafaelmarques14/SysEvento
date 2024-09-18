@@ -1,44 +1,39 @@
 package dsc.model;
 
 import jakarta.ejb.Stateless;
-import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Stateless
 public class UsuarioRepositorio {
 
-    private List<Usuario> usuarios = new ArrayList<>();
+    @PersistenceContext(unitName = "usuarioPU")
+    private EntityManager em;
 
     public void adicionarUsuario(Usuario usuario) {
-        if (usuario != null && usuario.getEmail() != null) {
-            usuarios.add(usuario);
-        }
+        em.persist(usuario);
     }
 
     public void atualizarUsuario(Usuario usuarioAtualizado) {
-        for (int i = 0; i < usuarios.size(); i++) {
-            Usuario u = usuarios.get(i);
-            if (u.getEmail().equals(usuarioAtualizado.getEmail())) {
-                u.setNome(usuarioAtualizado.getNome());
-                u.setEmail(usuarioAtualizado.getEmail());
-                u.setSenha(usuarioAtualizado.getSenha());
-                break;
-            }
-        }
+        em.merge(usuarioAtualizado);
     }
 
     public void removerUsuario(String email) {
-        usuarios.removeIf(u -> u.getEmail().equals(email));
+        Usuario usuario = buscarUsuarioPeloEmail(email);
+        if (usuario != null) {
+            em.remove(usuario);
+        }
     }
 
     public Usuario buscarUsuarioPeloEmail(String email) {
-        return usuarios.stream()
-                .filter(u -> u.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
+        List<Usuario> usuarios = em.createQuery("SELECT u FROM Usuario u WHERE u.email = :email", Usuario.class)
+                .setParameter("email", email)
+                .getResultList();
+        return usuarios.isEmpty() ? null : usuarios.get(0);
     }
 
     public List<Usuario> listarUsuarios() {
-        return new ArrayList<>(usuarios);
+        return em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
     }
 }
