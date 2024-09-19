@@ -2,6 +2,10 @@ package dsc.model;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -11,10 +15,15 @@ public class UsuarioBean {
     @EJB
     private UsuarioRepositorio usuarioRepositorio;
 
+    @EJB
+    private EventoBean eventoBean; // Adicionado para acessar eventos relacionados
+
+    @Inject
+    private HttpServletRequest request; // Para acessar a sessão HTTP
+
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
-    // Adicionar usuário
     public void adicionarUsuario(Usuario usuario) throws IllegalArgumentException {
         validarUsuario(usuario);
         if (usuarioRepositorio.buscarUsuarioPeloEmail(usuario.getEmail()) != null) {
@@ -23,7 +32,6 @@ public class UsuarioBean {
         usuarioRepositorio.adicionarUsuario(usuario);
     }
 
-    // Atualizar usuário
     public void atualizarUsuario(Usuario usuarioAtualizado) throws IllegalArgumentException {
         validarUsuario(usuarioAtualizado);
         Usuario usuarioExistente = usuarioRepositorio.buscarUsuarioPeloEmail(usuarioAtualizado.getEmail());
@@ -33,7 +41,6 @@ public class UsuarioBean {
         usuarioRepositorio.atualizarUsuario(usuarioAtualizado);
     }
 
-    // Remover usuário e seus eventos associados
     public void removerUsuario(String email) throws IllegalArgumentException {
         if (email == null || email.isEmpty() || !pattern.matcher(email).matches()) {
             throw new IllegalArgumentException("Email inválido.");
@@ -42,11 +49,23 @@ public class UsuarioBean {
         if (usuarioExistente == null) {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
-        // Passa a entidade Usuario para garantir a remoção em cascata
+
+        // Remover todos os eventos associados
+        List<Evento> eventos = eventoBean.listarEventos(usuarioExistente);
+        for (Evento evento : eventos) {
+            eventoBean.removerEvento(evento);
+        }
+
+        // Remover o usuário
         usuarioRepositorio.removerUsuario(usuarioExistente);
+
+        // Realizar o logout
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
     }
 
-    // Buscar usuário pelo email
     public Usuario buscarUsuarioPeloEmail(String email) throws IllegalArgumentException {
         if (email == null || email.isEmpty() || !pattern.matcher(email).matches()) {
             throw new IllegalArgumentException("Email inválido.");
@@ -54,12 +73,10 @@ public class UsuarioBean {
         return usuarioRepositorio.buscarUsuarioPeloEmail(email);
     }
 
-    // Listar usuários
     public List<Usuario> listarUsuarios() {
         return usuarioRepositorio.listarUsuarios();
     }
 
-    // Validação dos campos do usuário
     private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
         if (usuario == null) {
             throw new IllegalArgumentException("Usuário não pode ser nulo.");

@@ -92,7 +92,6 @@ public class UsuarioMB implements Serializable {
                 return;
             }
 
-
             if (!usuario.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Email inválido.", "Email inválido."));
@@ -123,23 +122,18 @@ public class UsuarioMB implements Serializable {
             }
             usuarioBean.removerUsuario(emailLogin);
             emailLogin = null;
-            loggedIn = false;
+            loggedIn = false; // Definir como não logado
+            usuario = new Usuario(); // Limpar o usuário atual
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso: Usuário removido com sucesso. Você será deslogado.", "Usuário removido com sucesso. Você será deslogado."));
-            try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            logout(); // Chamar o método de logout para encerrar a sessão
         } catch (IllegalArgumentException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
         }
     }
 
-    public List<Usuario> listarUsuarios() {
-        return usuarioBean.listarUsuarios();
-    }
+    // Getters e Setters
 
     public Usuario getUsuario() {
         return usuario;
@@ -167,9 +161,5 @@ public class UsuarioMB implements Serializable {
 
     public boolean isLoggedIn() {
         return loggedIn;
-    }
-
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
     }
 }

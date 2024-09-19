@@ -20,9 +20,11 @@ public class EventoBean {
     }
 
     public void removerEvento(Evento evento) {
-        Evento eventoRemover = em.find(Evento.class, evento.getId());
-        if (eventoRemover != null) {
-            em.remove(eventoRemover);
+        if (evento != null) {
+            Evento eventoRemover = em.find(Evento.class, evento.getId());
+            if (eventoRemover != null) {
+                em.remove(eventoRemover);
+            }
         }
     }
 
