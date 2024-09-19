@@ -31,6 +31,11 @@
       <version>13.0.0</version>
       <classifier>jakarta</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>0.4</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>SysEvento</finalName>

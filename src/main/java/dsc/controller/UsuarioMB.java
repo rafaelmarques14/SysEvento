@@ -9,9 +9,10 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpSession;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 
 @Named
 @SessionScoped
@@ -45,7 +46,8 @@ public class UsuarioMB implements Serializable {
     public String login() {
         try {
             Usuario usuarioLogado = usuarioBean.buscarUsuarioPeloEmail(emailLogin);
-            if (usuarioLogado != null && usuarioLogado.getSenha().equals(senhaLogin)) {
+            if (usuarioLogado != null &&
+                    BCrypt.checkpw(senhaLogin, usuarioLogado.getSenha())) { // Verificação com BCrypt
                 usuario = usuarioLogado;
                 loggedIn = true;
                 HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
@@ -137,7 +139,6 @@ public class UsuarioMB implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
         }
     }
-
 
     public Usuario getUsuario() {
         return usuario;
