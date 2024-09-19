@@ -22,7 +22,7 @@ public class Evento implements Serializable {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    // Getters e Setters
+
     public Long getId() {
         return id;
     }

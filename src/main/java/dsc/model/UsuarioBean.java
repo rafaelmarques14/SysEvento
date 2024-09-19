@@ -16,10 +16,10 @@ public class UsuarioBean {
     private UsuarioRepositorio usuarioRepositorio;
 
     @EJB
-    private EventoBean eventoBean; // Adicionado para acessar eventos relacionados
+    private EventoBean eventoBean;
 
     @Inject
-    private HttpServletRequest request; // Para acessar a sessão HTTP
+    private HttpServletRequest request;
 
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
@@ -50,16 +50,14 @@ public class UsuarioBean {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
 
-        // Remover todos os eventos associados
+
         List<Evento> eventos = eventoBean.listarEventos(usuarioExistente);
         for (Evento evento : eventos) {
             eventoBean.removerEvento(evento);
         }
 
-        // Remover o usuário
         usuarioRepositorio.removerUsuario(usuarioExistente);
 
-        // Realizar o logout
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();

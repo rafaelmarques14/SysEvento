@@ -122,18 +122,22 @@ public class UsuarioMB implements Serializable {
             }
             usuarioBean.removerUsuario(emailLogin);
             emailLogin = null;
-            loggedIn = false; // Definir como não logado
-            usuario = new Usuario(); // Limpar o usuário atual
+            loggedIn = false;
+            usuario = new Usuario();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso: Usuário removido com sucesso. Você será deslogado.", "Usuário removido com sucesso. Você será deslogado."));
-            logout(); // Chamar o método de logout para encerrar a sessão
+            logout();
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (IllegalArgumentException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
         }
     }
 
-    // Getters e Setters
 
     public Usuario getUsuario() {
         return usuario;

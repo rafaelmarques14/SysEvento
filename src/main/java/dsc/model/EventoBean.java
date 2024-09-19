@@ -12,10 +12,12 @@ public class EventoBean {
     private EntityManager em;
 
     public void adicionarEvento(Evento evento) {
+        validarEvento(evento);
         em.persist(evento);
     }
 
     public void atualizarEvento(Evento eventoAtualizado) {
+        validarEvento(eventoAtualizado);
         em.merge(eventoAtualizado);
     }
 
@@ -32,5 +34,20 @@ public class EventoBean {
         return em.createQuery("SELECT e FROM Evento e WHERE e.usuario = :usuario", Evento.class)
                 .setParameter("usuario", usuario)
                 .getResultList();
+    }
+
+    private void validarEvento(Evento evento) throws IllegalArgumentException {
+        if (evento == null) {
+            throw new IllegalArgumentException("Evento não pode ser nulo.");
+        }
+        if (evento.getNome() == null || evento.getNome().isEmpty()) {
+            throw new IllegalArgumentException("Nome do evento é obrigatório.");
+        }
+        if (evento.getData() == null) {
+            throw new IllegalArgumentException("Data do evento é obrigatória.");
+        }
+        if (evento.getUsuario() == null) {
+            throw new IllegalArgumentException("Usuário do evento é obrigatório.");
+        }
     }
 }

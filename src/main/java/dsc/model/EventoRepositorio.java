@@ -11,16 +11,16 @@ public class EventoRepositorio {
     @PersistenceContext(unitName = "eventoPU")
     private EntityManager entityManager;
 
-    // Adicionar Evento
+
     public void adicionarEvento(Evento evento) {
         try {
             entityManager.persist(evento);
         } catch (Exception e) {
-            e.printStackTrace();  // Registrar exceções para análise
+            e.printStackTrace();
         }
     }
 
-    // Remover Evento
+
     public void removerEvento(Evento evento) {
         try {
             Evento eventoExistente = entityManager.find(Evento.class, evento.getId());
@@ -28,11 +28,11 @@ public class EventoRepositorio {
                 entityManager.remove(eventoExistente);
             }
         } catch (Exception e) {
-            e.printStackTrace();  // Registrar exceções para análise
+            e.printStackTrace();
         }
     }
 
-    // Atualizar Evento
+
     public void atualizarEvento(Evento eventoAtualizado) {
         try {
             Evento eventoExistente = entityManager.find(Evento.class, eventoAtualizado.getId());
@@ -40,16 +40,16 @@ public class EventoRepositorio {
                 eventoExistente.setNome(eventoAtualizado.getNome());
                 eventoExistente.setData(eventoAtualizado.getData());
                 eventoExistente.setUsuario(eventoAtualizado.getUsuario());
-                entityManager.merge(eventoExistente);  // Sincroniza com o banco
+                entityManager.merge(eventoExistente);
             } else {
                 throw new IllegalArgumentException("Evento não encontrado para atualização.");
             }
         } catch (Exception e) {
-            e.printStackTrace();  // Registrar exceções para análise
+            e.printStackTrace();
         }
     }
 
-    // Encontrar Evento
+
     public Evento encontrarEvento(String nome, Usuario usuario) {
         return entityManager.createQuery("SELECT e FROM Evento e WHERE e.nome = :nome AND e.usuario = :usuario", Evento.class)
                 .setParameter("nome", nome)
@@ -59,7 +59,7 @@ public class EventoRepositorio {
                 .orElse(null);
     }
 
-    // Listar Eventos
+
     public List<Evento> listarEventos(Usuario usuario) {
         return entityManager.createQuery("SELECT e FROM Evento e WHERE e.usuario = :usuario", Evento.class)
                 .setParameter("usuario", usuario)

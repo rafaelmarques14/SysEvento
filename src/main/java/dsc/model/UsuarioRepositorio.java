@@ -12,7 +12,7 @@ public class UsuarioRepositorio {
     @PersistenceContext(unitName = "usuarioPU")
     private EntityManager em;
 
-    @PersistenceContext(unitName = "eventoPU") // Adiciona a unidade de persistência dos eventos
+    @PersistenceContext(unitName = "eventoPU")
     private EntityManager eventoEm;
 
     public void adicionarUsuario(Usuario usuario) {
@@ -33,7 +33,7 @@ public class UsuarioRepositorio {
 
     public void removerUsuario(Usuario usuario) {
         if (usuario != null) {
-            // Remover eventos associados
+
             List<Evento> eventos = eventoEm.createQuery("SELECT e FROM Evento e WHERE e.usuario = :usuario", Evento.class)
                     .setParameter("usuario", usuario)
                     .getResultList();
@@ -41,7 +41,6 @@ public class UsuarioRepositorio {
                 eventoEm.remove(evento);
             }
 
-            // Remover o usuário
             if (em.contains(usuario)) {
                 em.remove(usuario);
             } else {
