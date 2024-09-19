@@ -14,6 +14,7 @@ public class UsuarioBean {
     private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
     private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
+    // Adicionar usuário
     public void adicionarUsuario(Usuario usuario) throws IllegalArgumentException {
         validarUsuario(usuario);
         if (usuarioRepositorio.buscarUsuarioPeloEmail(usuario.getEmail()) != null) {
@@ -22,6 +23,7 @@ public class UsuarioBean {
         usuarioRepositorio.adicionarUsuario(usuario);
     }
 
+    // Atualizar usuário
     public void atualizarUsuario(Usuario usuarioAtualizado) throws IllegalArgumentException {
         validarUsuario(usuarioAtualizado);
         Usuario usuarioExistente = usuarioRepositorio.buscarUsuarioPeloEmail(usuarioAtualizado.getEmail());
@@ -31,6 +33,7 @@ public class UsuarioBean {
         usuarioRepositorio.atualizarUsuario(usuarioAtualizado);
     }
 
+    // Remover usuário e seus eventos associados
     public void removerUsuario(String email) throws IllegalArgumentException {
         if (email == null || email.isEmpty() || !pattern.matcher(email).matches()) {
             throw new IllegalArgumentException("Email inválido.");
@@ -39,9 +42,11 @@ public class UsuarioBean {
         if (usuarioExistente == null) {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
-        usuarioRepositorio.removerUsuario(email);
+        // Passa a entidade Usuario para garantir a remoção em cascata
+        usuarioRepositorio.removerUsuario(usuarioExistente);
     }
 
+    // Buscar usuário pelo email
     public Usuario buscarUsuarioPeloEmail(String email) throws IllegalArgumentException {
         if (email == null || email.isEmpty() || !pattern.matcher(email).matches()) {
             throw new IllegalArgumentException("Email inválido.");
@@ -49,10 +54,12 @@ public class UsuarioBean {
         return usuarioRepositorio.buscarUsuarioPeloEmail(email);
     }
 
+    // Listar usuários
     public List<Usuario> listarUsuarios() {
         return usuarioRepositorio.listarUsuarios();
     }
 
+    // Validação dos campos do usuário
     private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
         if (usuario == null) {
             throw new IllegalArgumentException("Usuário não pode ser nulo.");
@@ -67,5 +74,4 @@ public class UsuarioBean {
             throw new IllegalArgumentException("Senha é obrigatória.");
         }
     }
-
 }

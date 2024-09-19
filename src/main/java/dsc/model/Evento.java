@@ -1,11 +1,13 @@
 package dsc.model;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "eventos")
-public class Evento {
+public class Evento implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +22,7 @@ public class Evento {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    public Evento() {}
-
-    public Evento(String nome, Date data, Usuario usuario) {
-        this.nome = nome;
-        this.data = data;
-        this.usuario = usuario;
-    }
-
+    // Getters e Setters
     public Long getId() {
         return id;
     }

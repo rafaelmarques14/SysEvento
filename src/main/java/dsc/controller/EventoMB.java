@@ -77,14 +77,14 @@ public class EventoMB implements Serializable {
     }
 
     public String atualizarEvento() {
-        for (Evento e : eventos) {
-            if (e.getNome().equals(evento.getNome()) && e.getUsuario().equals(usuarioAutenticado)) {
-                e.setData(evento.getData());
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Evento atualizado com sucesso!"));
-                break;
-            }
+        try {
+            eventoBean.atualizarEvento(evento);
+            eventos = eventoBean.listarEventos(usuarioAutenticado);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Evento atualizado com sucesso!"));
+            evento = new Evento();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao atualizar evento.", e.getMessage()));
         }
-        evento = new Evento();
         return "home?faces-redirect=true";
     }
 

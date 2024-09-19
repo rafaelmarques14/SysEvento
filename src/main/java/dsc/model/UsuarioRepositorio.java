@@ -19,10 +19,9 @@ public class UsuarioRepositorio {
         em.merge(usuarioAtualizado);
     }
 
-    public void removerUsuario(String email) {
-        Usuario usuario = buscarUsuarioPeloEmail(email);
+    public void removerUsuario(Usuario usuario) {
         if (usuario != null) {
-            em.remove(usuario);
+            em.remove(em.contains(usuario) ? usuario : em.merge(usuario));
         }
     }
 

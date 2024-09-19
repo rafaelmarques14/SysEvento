@@ -1,46 +1,34 @@
 package dsc.model;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Stateless
 public class EventoBean {
 
-    @EJB
-    private EventoRepositorio eventoRepositorio;
+    @PersistenceContext(unitName = "eventoPU")
+    private EntityManager em;
 
-    public void adicionarEvento(Evento evento) throws IllegalArgumentException {
-        validarEvento(evento);
-        eventoRepositorio.adicionarEvento(evento);
+    public void adicionarEvento(Evento evento) {
+        em.persist(evento);
     }
 
-    public void removerEvento(Evento evento) throws IllegalArgumentException {
-        validarEvento(evento);
-        eventoRepositorio.removerEvento(evento);
+    public void atualizarEvento(Evento eventoAtualizado) {
+        em.merge(eventoAtualizado);
     }
 
-    public Evento encontrarEvento(String nome, Usuario usuario) {
-        return eventoRepositorio.encontrarEvento(nome, usuario);
+    public void removerEvento(Evento evento) {
+        Evento eventoRemover = em.find(Evento.class, evento.getId());
+        if (eventoRemover != null) {
+            em.remove(eventoRemover);
+        }
     }
 
     public List<Evento> listarEventos(Usuario usuario) {
-        return eventoRepositorio.listarEventos(usuario);
-    }
-
-    private void validarEvento(Evento evento) throws IllegalArgumentException {
-        if (evento == null) {
-            throw new IllegalArgumentException("Evento não pode ser nulo.");
-        }
-        if (evento.getNome() == null || evento.getNome().isEmpty()) {
-            throw new IllegalArgumentException("Nome do evento é obrigatório.");
-        }
-        if (evento.getData() == null) {
-            throw new IllegalArgumentException("Data do evento é obrigatória.");
-        }
-        if (evento.getUsuario() == null) {
-            throw new IllegalArgumentException("Usuário do evento é obrigatório.");
-        }
+        return em.createQuery("SELECT e FROM Evento e WHERE e.usuario = :usuario", Evento.class)
+                .setParameter("usuario", usuario)
+                .getResultList();
     }
 }
