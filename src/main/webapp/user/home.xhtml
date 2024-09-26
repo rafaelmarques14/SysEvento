@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+   <title>Home</title>
+   <style>
+      .button-container {
+         display: flex;
+         gap: 10px;
+      }
+   </style>
+</h:head>
+<h:body>
+   <f:metadata>
+      <f:viewAction action="#{usuarioMB.verificarAutenticacao}" />
+   </f:metadata>
+   <div class="card">
+      <h:form id="menuForm">
+         <p:growl id="messages" autoUpdate="true"/>
+
+         <p:menubar hideDelay="1000">
+
+            <p:submenu label="Users" icon="pi pi-fw pi-user">
+               <p:menuitem value="Remover" icon="pi pi-fw pi-user-minus" onclick="PF('dlgRemoverUsuario').show();" type="button"/>
+               <p:menuitem value="Atualizar" icon="pi pi-fw pi-user-edit" onclick="PF('dlgAtualizar').show();" type="button"/>
+            </p:submenu>
+
+            <p:submenu label="Evento" icon="pi pi-fw pi-calendar">
+               <p:menuitem value="Cadastrar" icon="pi pi-fw pi-plus" onclick="PF('dlgCadastrarEvento').show();" type="button"/>
+            </p:submenu>
+
+            <p:divider layout="vertical"/>
+
+            <p:menuitem value="Logout" action="#{usuarioMB.logout}" icon="pi pi-sign-out"/>
+         </p:menubar>
+      </h:form>
+
+      <!-- Modal de Remover Usuário -->
+      <p:dialog header="Remover Usuário" widgetVar="dlgRemoverUsuario" modal="true" closable="true" resizable="false">
+         <h:form id="removerUsuarioForm">
+            <p:messages id="removerUsuarioMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="emailRemover" value="Email: " />
+               <p:inputText id="emailRemover" value="#{usuarioMB.emailLogin}" required="true" requiredMessage="Digite o email." />
+
+               <h:outputLabel />
+               <p:commandButton value="Remover" actionListener="#{usuarioMB.removerUsuario}" onclick="PF('confirmDialogUsuario').show();" update="removerUsuarioMessages" type="button"/>
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
+      <!-- Diálogo de Confirmação de Usuário -->
+      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o usuário?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialogUsuario">
+         <h:form>
+            <p:commandButton value="Sim" action="#{usuarioMB.removerUsuario()}" update=":menuForm:messages, :removerUsuarioForm:removerUsuarioMessages" oncomplete="PF('confirmDialogUsuario').hide(); PF('dlgRemoverUsuario').hide();"/>
+            <p:commandButton value="Não" onclick="PF('confirmDialogUsuario').hide();" type="button"/>
+         </h:form>
+      </p:confirmDialog>
+
+      <!-- Modal de Atualizar Usuário -->
+      <p:dialog header="Atualizar Usuário" widgetVar="dlgAtualizar" modal="true" closable="true" resizable="false">
+         <h:form id="atualizarForm">
+            <p:messages id="atualizarMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="emailAtualizar" value="Email: " />
+               <p:inputText id="emailAtualizar" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Digite o email." />
+
+               <h:outputLabel for="nomeAtualizar" value="Nome: " />
+               <p:inputText id="nomeAtualizar" value="#{usuarioMB.usuario.nome}" required="true" requiredMessage="Digite o nome." />
+
+               <h:outputLabel for="senhaAtualizar" value="Senha: " />
+               <p:password id="senhaAtualizar" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Digite a senha." />
+
+               <h:outputLabel />
+               <p:commandButton value="Atualizar" action="#{usuarioMB.atualizarUsuario()}" update=":menuForm:messages, :atualizarForm:atualizarMessages" oncomplete="PF('dlgAtualizar').hide();" />
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
+      <!-- Modal de Cadastrar Evento -->
+      <p:dialog header="Cadastrar Evento" widgetVar="dlgCadastrarEvento" modal="true" closable="true" resizable="false">
+         <h:form id="cadastrarEventoForm">
+            <p:messages id="cadastrarEventoMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="nomeEvento" value="Nome do Evento: " />
+               <p:inputText id="nomeEvento" value="#{eventoMB.evento.nome}" required="true" requiredMessage="Digite o nome do evento." />
+
+               <h:outputLabel for="dataEvento" value="Data do Evento: " />
+               <p:calendar id="dataEvento" value="#{eventoMB.evento.data}" pattern="dd/MM/yyyy" required="true" requiredMessage="Digite a data do evento." />
+
+               <h:outputLabel />
+               <p:commandButton value="Cadastrar" action="#{eventoMB.cadastrarEvento}" update=":menuForm:messages, :cadastrarEventoForm:cadastrarEventoMessages" oncomplete="PF('dlgCadastrarEvento').hide();" />
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
+      <!-- Modal de Atualizar Evento -->
+      <p:dialog header="Atualizar Evento" widgetVar="dlgAtualizarEvento" modal="true" closable="true" resizable="false">
+         <h:form id="atualizarEventoForm">
+            <p:messages id="atualizarEventoMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+               <h:outputLabel for="nomeEventoAtualizar" value="Nome do Evento: " />
+               <p:inputText id="nomeEventoAtualizar" value="#{eventoMB.evento.nome}" required="true" requiredMessage="Digite o nome do evento." />
+
+               <h:outputLabel for="dataEventoAtualizar" value="Data do Evento: " />
+               <p:calendar id="dataEventoAtualizar" value="#{eventoMB.evento.data}" pattern="dd/MM/yyyy" required="true" requiredMessage="Digite a data do evento." />
+
+               <h:outputLabel />
+               <p:commandButton value="Atualizar" action="#{eventoMB.atualizarEvento}" update=":menuForm:messages, :atualizarEventoForm:atualizarEventoMessages" oncomplete="PF('dlgAtualizarEvento').hide();" />
+            </h:panelGrid>
+         </h:form>
+      </p:dialog>
+
+      <!-- Tabela de Eventos -->
+      <h:form id="eventosForm">
+         <p:dataTable id="eventosPanel" value="#{eventoMB.eventos}" var="evento" styleClass="data-table" border="1">
+            <p:column headerText="Nome do Evento">
+               <h:outputText value="#{evento.nome}" />
+            </p:column>
+            <p:column headerText="Data do Evento">
+               <h:outputText value="#{evento.data}">
+                  <f:convertDateTime pattern="dd/MM/yyyy"/>
+               </h:outputText>
+            </p:column>
+            <p:column headerText="Ações">
+               <p:commandButton value="Atualizar" icon="pi pi-fw pi-pencil" actionListener="#{eventoMB.prepararAtualizacao(evento)}" onclick="PF('dlgAtualizarEvento').show();" update=":atualizarEventoForm"/>
+               <p:commandButton value="Remover" icon="pi pi-fw pi-trash" actionListener="#{eventoMB.prepararRemocao(evento)}" onclick="PF('confirmDialogEvento').show();" update=":menuForm:messages, :eventosForm:eventosPanel" styleClass="ui-button-danger"/>
+            </p:column>
+         </p:dataTable>
+      </h:form>
+
+      <!-- Diálogo de Confirmação de Evento -->
+      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o evento?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialogEvento">
+         <h:form>
+            <p:commandButton value="Sim" action="#{eventoMB.removerEvento()}" update=":menuForm:messages, :eventosForm:eventosPanel" oncomplete="PF('confirmDialogEvento').hide();"/>
+            <p:commandButton value="Não" onclick="PF('confirmDialogEvento').hide();" type="button"/>
+         </h:form>
+      </p:confirmDialog>
+   </div>
+</h:body>
+</html>

@@ -9,7 +9,6 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import jakarta.ejb.EJB;
 import jakarta.servlet.http.HttpSession;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -25,6 +24,7 @@ public class UsuarioMB implements Serializable {
     private String emailLogin;
     private String senhaLogin;
     private boolean loggedIn = false;
+    private String perfil;
 
     @PostConstruct
     public void init() {
@@ -46,13 +46,18 @@ public class UsuarioMB implements Serializable {
     public String login() {
         try {
             Usuario usuarioLogado = usuarioBean.buscarUsuarioPeloEmail(emailLogin);
-            if (usuarioLogado != null &&
-                    BCrypt.checkpw(senhaLogin, usuarioLogado.getSenha())) { // Verificação com BCrypt
+            if (usuarioLogado != null && senhaLogin.equals(usuarioLogado.getSenha())) {
                 usuario = usuarioLogado;
                 loggedIn = true;
                 HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
                 session.setAttribute("usuarioLogado", usuarioLogado);
-                return "home?faces-redirect=true";
+
+                // Redireciona com base no perfil do usuário
+                if ("admin".equals(usuarioLogado.getPerfil())) {
+                    return "/admin/home?faces-redirect=true"; // Ajuste para o caminho do admin
+                } else {
+                    return "/user/home?faces-redirect=true"; // Ajuste para o caminho do usuário
+                }
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Email ou senha inválidos."));
                 return null;
@@ -63,6 +68,7 @@ public class UsuarioMB implements Serializable {
         }
     }
 
+
     public String logout() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
@@ -71,14 +77,24 @@ public class UsuarioMB implements Serializable {
         }
         loggedIn = false;
         usuario = new Usuario();
-        return "login.xhtml?faces-redirect=true";
+
+        // Usar o contexto do servidor para redirecionar
+        try {
+            String contextPath = facesContext.getExternalContext().getRequestContextPath();
+            facesContext.getExternalContext().redirect(contextPath + "/login.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null; // Para evitar redirecionamento adicional do JSF
     }
 
     public void adicionarUsuario() {
         try {
+            usuario.setPerfil(perfil); // Atribuindo o perfil ao usuário
             usuarioBean.adicionarUsuario(usuario);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso: Usuário cadastrado com sucesso.", "Usuário cadastrado com sucesso."));
             usuario = new Usuario();
+            perfil = null;
         } catch (IllegalArgumentException e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
         }
@@ -89,29 +105,12 @@ public class UsuarioMB implements Serializable {
             if (usuario.getNome() == null || usuario.getNome().isEmpty() ||
                     usuario.getEmail() == null || usuario.getEmail().isEmpty() ||
                     usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Nome, email e senha são obrigatórios.", "Nome, email e senha são obrigatórios."));
-                return;
+                throw new IllegalArgumentException("Preencha todos os campos.");
             }
-
-            if (!usuario.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Email inválido.", "Email inválido."));
-                return;
-            }
-
-            if (loggedIn) {
-                usuarioBean.atualizarUsuario(usuario);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso: Usuário atualizado com sucesso.", "Usuário atualizado com sucesso."));
-                usuario = new Usuario();
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro: Você precisa estar logado para atualizar o usuário.", "Você precisa estar logado para atualizar o usuário."));
-            }
+            usuarioBean.atualizarUsuario(usuario);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Usuário atualizado com sucesso."));
         } catch (IllegalArgumentException e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
         }
     }
 
@@ -166,5 +165,13 @@ public class UsuarioMB implements Serializable {
 
     public boolean isLoggedIn() {
         return loggedIn;
+    }
+
+    public String getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) {
+        this.perfil = perfil;
     }
 }

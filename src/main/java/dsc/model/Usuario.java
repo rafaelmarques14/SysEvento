@@ -3,16 +3,19 @@ package dsc.model;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+
 @Entity
 @Table(name = "usuarios")
 public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String email;
     private String senha;
+    private String perfil; // Novo atributo
 
     // Getters e Setters
     public Long getId() {
@@ -45,5 +48,13 @@ public class Usuario implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getPerfil() { // Novo getter
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) { // Novo setter
+        this.perfil = perfil;
     }
 }
