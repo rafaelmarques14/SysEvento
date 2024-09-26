@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 @Named
 @SessionScoped
@@ -25,6 +26,7 @@ public class UsuarioMB implements Serializable {
     private String senhaLogin;
     private boolean loggedIn = false;
     private String perfil;
+    private List<Usuario> usuarios;
 
     @PostConstruct
     public void init() {
@@ -34,12 +36,34 @@ public class UsuarioMB implements Serializable {
     public void verificarAutenticacao() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+
+        // Verifica se a sessão existe e se o usuário está logado
         if (session == null || session.getAttribute("usuarioLogado") == null) {
             try {
                 facesContext.getExternalContext().redirect("login.xhtml");
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            // Recupera o usuário logado
+            usuario = (Usuario) session.getAttribute("usuarioLogado");
+            perfil = usuario.getPerfil();
+
+            // Lógica de redirecionamento baseado no perfil
+            String requestedURI = facesContext.getExternalContext().getRequestServletPath();
+            if ("admin".equals(perfil) && requestedURI.startsWith("/user")) {
+                redirect("/admin/home");
+            } else if ("user".equals(perfil) && requestedURI.startsWith("/admin")) {
+                redirect("/user/home");
+            }
+        }
+    }
+
+    private void redirect(String page) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(page + "?faces-redirect=true");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -67,7 +91,6 @@ public class UsuarioMB implements Serializable {
             return null;
         }
     }
-
 
     public String logout() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -139,6 +162,10 @@ public class UsuarioMB implements Serializable {
         }
     }
 
+    public void listarUsuarios() {
+        usuarios = usuarioBean.buscarUsuariosPorPerfil("user");
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
@@ -173,5 +200,9 @@ public class UsuarioMB implements Serializable {
 
     public void setPerfil(String perfil) {
         this.perfil = perfil;
+    }
+
+    public List<Usuario> getUsuarios() {
+        return usuarios;
     }
 }

@@ -70,9 +70,11 @@ public class UsuarioBean {
         return usuarioRepositorio.buscarUsuarioPeloEmail(email);
     }
 
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepositorio.listarUsuarios();
+    public List<Usuario> buscarUsuariosPorPerfil(String perfil) {
+        return usuarioRepositorio.buscarUsuariosPorPerfil(perfil);
     }
+
+
 
     private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
         if (usuario == null) {
