@@ -3,9 +3,8 @@
         PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN" "http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
 
 <glassfish-web-app>
-    <context-root>/SysEvento</context-root> <!-- Altere para o contexto desejado -->
+    <context-root>/SysEvento</context-root>
 
-    <!-- Definições de segurança -->
     <security-role>
         <role-name>admin</role-name>
     </security-role>
@@ -13,12 +12,11 @@
         <role-name>user</role-name>
     </security-role>
 
-    <!-- Configurações de JAAS Realm, se necessário -->
     <login-config>
-        <auth-method>FORM</auth-method> <!-- Ou outro método que você esteja utilizando -->
+        <auth-method>FORM</auth-method>
         <form-login-config>
-            <form-login-page>/login.xhtml</form-login-page> <!-- Página de login -->
-            <form-error-page>/error.xhtml</form-error-page> <!-- Página de erro, se necessário -->
+            <form-login-page>/login.xhtml</form-login-page>
+            <form-error-page>/error.xhtml</form-error-page>
         </form-login-config>
     </login-config>
 </glassfish-web-app>

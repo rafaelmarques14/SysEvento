@@ -67,14 +67,13 @@ public class UsuarioMB implements Serializable {
 
     public String login() {
         try {
-            Usuario usuarioLogado = usuarioBean.buscarUsuarioPeloEmail(emailLogin);
-            if (usuarioLogado != null && senhaLogin.equals(usuarioLogado.getSenha())) {
-                usuario = usuarioLogado;
+            if (usuarioBean.isValidPassword(emailLogin, senhaLogin)) {
+                usuario = usuarioBean.buscarUsuarioPeloEmail(emailLogin);
                 loggedIn = true;
                 HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-                session.setAttribute("usuarioLogado", usuarioLogado);
+                session.setAttribute("usuarioLogado", usuario);
 
-                if ("admin".equals(usuarioLogado.getPerfil())) {
+                if ("admin".equals(usuario.getPerfil())) {
                     return "/admin/home?faces-redirect=true";
                 } else {
                     return "/user/home?faces-redirect=true";

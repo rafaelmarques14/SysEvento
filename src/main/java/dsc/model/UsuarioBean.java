@@ -5,7 +5,10 @@ import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.xml.bind.DatatypeConverter;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,6 +32,7 @@ public class UsuarioBean {
         if (usuarioRepositorio.buscarUsuarioPeloEmail(usuario.getEmail()) != null) {
             throw new IllegalArgumentException("Usuário com este email já existe.");
         }
+        usuario.setSenha(encodeSHA256(usuario.getSenha()));
         usuarioRepositorio.adicionarUsuario(usuario);
     }
 
@@ -38,6 +42,7 @@ public class UsuarioBean {
         if (usuarioExistente == null) {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
+        usuarioAtualizado.setSenha(encodeSHA256(usuarioAtualizado.getSenha()));
         usuarioRepositorio.atualizarUsuario(usuarioAtualizado);
     }
 
@@ -74,7 +79,29 @@ public class UsuarioBean {
         return usuarioRepositorio.buscarUsuariosPorPerfil(perfil);
     }
 
+    public boolean isValidPassword(String email, String senha) {
+        Usuario usuarioLogado = buscarUsuarioPeloEmail(email);
+        if (usuarioLogado != null) {
+            return encodeSHA256(senha).equals(usuarioLogado.getSenha());
+        }
+        return false;
+    }
 
+    private String encodeSHA256(String senha) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(senha.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Erro ao codificar a senha", e);
+        }
+    }
 
     private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
         if (usuario == null) {
