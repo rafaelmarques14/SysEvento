@@ -15,7 +15,7 @@ public class Usuario implements Serializable {
     private String nome;
     private String email;
     private String senha;
-    private String perfil; // Novo atributo
+    private String perfil;
 
     // Getters e Setters
     public Long getId() {
@@ -50,11 +50,11 @@ public class Usuario implements Serializable {
         this.senha = senha;
     }
 
-    public String getPerfil() { // Novo getter
+    public String getPerfil() {
         return perfil;
     }
 
-    public void setPerfil(String perfil) { // Novo setter
+    public void setPerfil(String perfil) {
         this.perfil = perfil;
     }
 }

@@ -37,7 +37,6 @@ public class UsuarioMB implements Serializable {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
 
-        // Verifica se a sessão existe e se o usuário está logado
         if (session == null || session.getAttribute("usuarioLogado") == null) {
             try {
                 facesContext.getExternalContext().redirect("login.xhtml");
@@ -45,11 +44,10 @@ public class UsuarioMB implements Serializable {
                 e.printStackTrace();
             }
         } else {
-            // Recupera o usuário logado
+
             usuario = (Usuario) session.getAttribute("usuarioLogado");
             perfil = usuario.getPerfil();
 
-            // Lógica de redirecionamento baseado no perfil
             String requestedURI = facesContext.getExternalContext().getRequestServletPath();
             if ("admin".equals(perfil) && requestedURI.startsWith("/user")) {
                 redirect("/admin/home");
@@ -76,11 +74,10 @@ public class UsuarioMB implements Serializable {
                 HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
                 session.setAttribute("usuarioLogado", usuarioLogado);
 
-                // Redireciona com base no perfil do usuário
                 if ("admin".equals(usuarioLogado.getPerfil())) {
-                    return "/admin/home?faces-redirect=true"; // Ajuste para o caminho do admin
+                    return "/admin/home?faces-redirect=true";
                 } else {
-                    return "/user/home?faces-redirect=true"; // Ajuste para o caminho do usuário
+                    return "/user/home?faces-redirect=true";
                 }
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Email ou senha inválidos."));
@@ -101,19 +98,18 @@ public class UsuarioMB implements Serializable {
         loggedIn = false;
         usuario = new Usuario();
 
-        // Usar o contexto do servidor para redirecionar
         try {
             String contextPath = facesContext.getExternalContext().getRequestContextPath();
             facesContext.getExternalContext().redirect(contextPath + "/login.xhtml");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null; // Para evitar redirecionamento adicional do JSF
+        return null;
     }
 
     public void adicionarUsuario() {
         try {
-            usuario.setPerfil(perfil); // Atribuindo o perfil ao usuário
+            usuario.setPerfil(perfil);
             usuarioBean.adicionarUsuario(usuario);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso: Usuário cadastrado com sucesso.", "Usuário cadastrado com sucesso."));
             usuario = new Usuario();
