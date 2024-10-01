@@ -29,11 +29,11 @@
 
     <div class="content">
         <p:panelGrid columns="2" styleClass="button-grid">
-            <p:commandButton value="Logout" action="#{loginMB.logout}"
-                             styleClass="ui-button-secondary"/>
-
             <p:commandButton value="Adicionar Usuário"
                              onclick="PF('dlgCadastro').show()" styleClass="ui-button-primary" />
+
+            <p:commandButton value="Logout" action="#{loginMB.logout}"
+                             styleClass="ui-button-secondary"/>
         </p:panelGrid>
     </div>
 
@@ -106,37 +106,22 @@
         </h:form>
     </p:dialog>
 
-    <!-- Modal para Edição de Usuário -->
-    <p:dialog id="modalEdicao" widgetVar="modalEdicao"
-              header="Editar Usuário" modal="true" showEffect="fade"
-              hideEffect="fade">
-
+    <!-- Modal de Edição -->
+    <p:dialog header="Edição de Usuário" widgetVar="modalEdicao" modal="true" closable="true" resizable="false">
         <h:form id="formEdicao">
-            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
-                <!-- ID oculto -->
-                <h:inputHidden id="IDEdicao"
-                               value="#{usuarioMB.usuarioSelecionado.id}" />
+            <p:messages id="edicaoMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+                <h:outputLabel for="nomeEdicao" value="Nome: " />
+                <p:inputText id="nomeEdicao" value="#{usuarioMB.usuarioSelecionado.nome}" required="true" requiredMessage="Digite o nome." />
 
-                <!-- Nome -->
-                <p:outputLabel for="nomeEdicao" value="Nome:" />
-                <p:inputText id="nomeEdicao"
-                             value="#{usuarioMB.usuarioSelecionado.nome}" required="true" />
+                <h:outputLabel for="emailEdicao" value="Email: " />
+                <p:inputText id="emailEdicao" value="#{usuarioMB.usuarioSelecionado.email}" required="true" requiredMessage="Digite o email." />
 
-                <!-- Email -->
-                <p:outputLabel for="emailEdicao" value="Email:" />
-                <p:inputText id="emailEdicao"
-                             value="#{usuarioMB.usuarioSelecionado.email}" required="true" />
-
-                <!-- Senha -->
-                <p:outputLabel for="senhaEdicao" value="Senha:" />
-                <p:password id="senhaEdicao"
-                            value="#{usuarioMB.usuarioSelecionado.senha}" required="true" />
-            </p:panelGrid>
-
-            <p:commandButton value="Salvar"
-                             action="#{usuarioMB.atualizarUsuario}"
-                             update=":formUsuarios:tabelaUsuarios, :messages"
-                             oncomplete="PF('modalEdicao').hide()" />
+                <h:outputLabel />
+                <p:commandButton value="Atualizar" action="#{usuarioMB.atualizarUsuario}"
+                                 update=":formUsuarios:tabelaUsuarios, edicaoMessages"
+                                 oncomplete="if (!args.validationFailed) PF('modalEdicao').hide();" />
+            </h:panelGrid>
         </h:form>
     </p:dialog>
 

@@ -15,9 +15,6 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 
-//@Named
-//@RequestScoped
-
 @Named
 @SessionScoped
 @DeclareRoles({ "user", "admin" })
@@ -43,15 +40,15 @@ public class UsuarioMB implements Serializable {
             usuarioPerfil.setEmail(usuario.getEmail());
 
             usuarioSessionBean.criarUsuario(usuario, usuarioPerfil);
-            usuario = new Usuario();
+            usuario = new Usuario(); // Limpa o usuário após a criação
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuário criado com sucesso!", null));
         } catch (IllegalArgumentException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), null));
-            return null;
+            return null; // Retorna null em caso de erro
         }
-        return "home?faces-redirect=true";
+        return "home?faces-redirect=true"; // Redireciona para a página inicial
     }
 
     public String carregarUsuarioParaEdicao(String id) {
@@ -72,9 +69,9 @@ public class UsuarioMB implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuário atualizado com sucesso!", null));
             return "usuarios?faces-redirect=true"; // Redireciona para a lista de usuários
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Erro ao atualizar usuário: " + e.getMessage(), null));
-            return null;
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao atualizar usuário: " + e.getMessage(), null));
+            return null; // Retorna null em caso de erro
         }
     }
 
@@ -86,7 +83,7 @@ public class UsuarioMB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao remover usuário: " + e.getMessage(), null));
-            return null;
+            return null; // Retorna null em caso de erro
         }
         return "usuarios?faces-redirect=true"; // Redireciona para a lista de usuários
     }
