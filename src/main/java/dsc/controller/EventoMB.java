@@ -1,8 +1,8 @@
 package dsc.controller;
 
-import dsc.model.Evento;
-import dsc.model.EventoBean;
-import dsc.model.Usuario;
+import dsc.model.entidades.Evento;
+import dsc.model.sessionBeans.EventoBean;
+import dsc.model.entidades.Usuario;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;

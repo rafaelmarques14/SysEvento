@@ -2,50 +2,144 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
-    <title>Lista de Usuários</title>
+    <title>Gerenciamento de Usuários</title>
     <style>
-        .title {
-            font-size: 2em;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
+        .button-grid {
+            margin: 10px;
+        }
+
+        .button-grid .ui-button {
+            margin: 5px;
         }
     </style>
 </h:head>
 <h:body>
-    <f:metadata>
-        <f:viewAction action="#{usuarioMB.verificarAutenticacao}" />
-        <f:viewAction action="#{usuarioMB.listarUsuarios}" />
-    </f:metadata>
+    <p:growl id="messages" showDetail="true" />
 
-    <div class="card">
-        <h:form id="menuForm">
-            <p:growl id="messages" autoUpdate="true"/>
-            <p:menubar hideDelay="1000">
-                <p:menuitem value="Logout" action="#{usuarioMB.logout}" icon="pi pi-sign-out"/>
-            </p:menubar>
-        </h:form>
+    <div class="header">
+        <h2>Gerenciamento de Usuários</h2>
+        <h2>
+            Bem-vindo,
+            <h:outputText value="#{loginMB.usuarioLogado.nome}" />
+            !
+        </h2>
     </div>
 
-    <h:form>
-        <h1 class="title">Lista de Usuários</h1>
+    <div class="content">
+        <p:panelGrid columns="2" styleClass="button-grid">
+            <p:commandButton value="Logout" action="#{loginMB.logout}"
+                             styleClass="ui-button-secondary"/>
 
-        <p:dataTable id="userTable" var="usuario" value="#{usuarioMB.usuarios}" bordered="true" striped="true">
+            <p:commandButton value="Adicionar Usuário"
+                             onclick="PF('dlgCadastro').show()" styleClass="ui-button-primary" />
+        </p:panelGrid>
+    </div>
+
+    <h3>Lista de Usuários</h3>
+    <h:form id="formUsuarios">
+        <p:dataTable id="tabelaUsuarios" var="usuario"
+                     value="#{usuarioMB.listarUsuarios()}" editable="true">
+            <p:ajax event="cellEdit" listener="#{usuarioMB.atualizarUsuario}"
+                    update=":formUsuarios:tabelaUsuarios, :messages" />
+
             <p:column headerText="Nome">
-                <h:outputText value="#{usuario.nome}" />
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputText value="#{usuario.nome}" />
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputText value="#{usuario.nome}" />
+                    </f:facet>
+                </p:cellEditor>
             </p:column>
+
             <p:column headerText="Email">
-                <h:outputText value="#{usuario.email}" />
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputText value="#{usuario.email}" />
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputText value="#{usuario.email}" />
+                    </f:facet>
+                </p:cellEditor>
             </p:column>
-            <p:column headerText="Perfil">
-                <h:outputText value="#{usuario.perfil}" />
+
+            <p:column headerText="Ações">
+                <p:commandButton icon="pi pi-trash"
+                                 action="#{usuarioMB.removerUsuario(usuario.id)}"
+                                 update=":formUsuarios:tabelaUsuarios, :messages" />
+
+                <p:commandButton icon="pi pi-pencil"
+                                 action="#{usuarioMB.carregarUsuarioParaEdicao(usuario.id)}"
+                                 update=":formEdicao, :messages"
+                                 oncomplete="PF('modalEdicao').show()" />
+
             </p:column>
         </p:dataTable>
-
-        <p:messages autoUpdate="true" />
     </h:form>
+
+     <!-- Modal de Cadastro -->
+    <p:dialog header="Cadastro de Usuário" widgetVar="dlgCadastro" modal="true" closable="true" resizable="false">
+        <h:form id="cadastroForm">
+            <p:messages id="cadastroMessages" showDetail="true" autoUpdate="true" />
+            <h:panelGrid columns="2">
+                <h:outputLabel for="nome" value="Nome: " />
+                <p:inputText id="nome" value="#{usuarioMB.usuario.nome}" required="true" requiredMessage="Digite o nome." />
+
+                <h:outputLabel for="emailcad" value="Email: " />
+                <p:inputText id="emailcad" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Digite o email." />
+
+                <h:outputLabel for="senhacad" value="Senha: " />
+                <p:password id="senhacad" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Digite a senha." />
+
+                <h:outputLabel value="Perfil:" />
+                <h:selectOneRadio value="#{usuarioMB.perfil}" required="true">
+                    <f:selectItem itemValue="admin" itemLabel="Admin" />
+                    <f:selectItem itemValue="user" itemLabel="User" />
+                </h:selectOneRadio>
+
+                <h:outputLabel />
+                <p:commandButton value="Cadastrar" action="#{usuarioMB.criarUsuario}" update="cadastroMessages" oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+    <!-- Modal para Edição de Usuário -->
+    <p:dialog id="modalEdicao" widgetVar="modalEdicao"
+              header="Editar Usuário" modal="true" showEffect="fade"
+              hideEffect="fade">
+
+        <h:form id="formEdicao">
+            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+                <!-- ID oculto -->
+                <h:inputHidden id="IDEdicao"
+                               value="#{usuarioMB.usuarioSelecionado.id}" />
+
+                <!-- Nome -->
+                <p:outputLabel for="nomeEdicao" value="Nome:" />
+                <p:inputText id="nomeEdicao"
+                             value="#{usuarioMB.usuarioSelecionado.nome}" required="true" />
+
+                <!-- Email -->
+                <p:outputLabel for="emailEdicao" value="Email:" />
+                <p:inputText id="emailEdicao"
+                             value="#{usuarioMB.usuarioSelecionado.email}" required="true" />
+
+                <!-- Senha -->
+                <p:outputLabel for="senhaEdicao" value="Senha:" />
+                <p:password id="senhaEdicao"
+                            value="#{usuarioMB.usuarioSelecionado.senha}" required="true" />
+            </p:panelGrid>
+
+            <p:commandButton value="Salvar"
+                             action="#{usuarioMB.atualizarUsuario}"
+                             update=":formUsuarios:tabelaUsuarios, :messages"
+                             oncomplete="PF('modalEdicao').hide()" />
+        </h:form>
+    </p:dialog>
+
+
 </h:body>
 </html>

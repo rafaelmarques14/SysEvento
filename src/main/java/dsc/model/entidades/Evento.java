@@ -1,5 +1,6 @@
-package dsc.model;
+package dsc.model.entidades;
 
+import dsc.model.entidades.Usuario;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;

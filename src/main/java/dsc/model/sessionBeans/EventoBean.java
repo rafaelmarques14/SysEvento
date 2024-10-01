@@ -1,5 +1,7 @@
-package dsc.model;
+package dsc.model.sessionBeans;
 
+import dsc.model.entidades.Evento;
+import dsc.model.entidades.Usuario;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

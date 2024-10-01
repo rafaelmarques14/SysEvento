@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE glassfish-web-app
         PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN" "http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
-
-<glassfish-web-app>
-    <context-root>/SysEvento</context-root>
-
-    <security-role>
-        <role-name>admin</role-name>
-    </security-role>
-    <security-role>
+<glassfish-web-app error-url="">
+    <security-role-mapping>
         <role-name>user</role-name>
-    </security-role>
-
-    <login-config>
-        <auth-method>FORM</auth-method>
-        <form-login-config>
-            <form-login-page>/login.xhtml</form-login-page>
-            <form-error-page>/error.xhtml</form-error-page>
-        </form-login-config>
-    </login-config>
+        <group-name>user</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>admin</role-name>
+        <group-name>admin</group-name>
+    </security-role-mapping>
+    <parameter-encoding default-charset="UTF-8" />
 </glassfish-web-app>

@@ -6,15 +6,26 @@
              version="3.1">
     <persistence-unit name="usuarioPU" transaction-type="JTA">
         <jta-data-source>jdbc/evento</jta-data-source>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.MySQL8Dialect" />
+            <property name="jakarta.persistence.schema-generation.database.action"
+                      value="drop-and-create" />
+
         </properties>
     </persistence-unit>
 
     <persistence-unit name="eventoPU" transaction-type="JTA">
         <jta-data-source>jdbc/evento</jta-data-source>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.MySQL8Dialect" />
+            <property name="jakarta.persistence.schema-generation.database.action"
+                      value="drop-and-create" />
+
         </properties>
     </persistence-unit>
 </persistence>
+

@@ -2,8 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
    <title>Home</title>
    <style>
@@ -14,51 +13,22 @@
    </style>
 </h:head>
 <h:body>
-   <f:metadata>
-      <f:viewAction action="#{usuarioMB.verificarAutenticacao}" />
-   </f:metadata>
    <div class="card">
       <h:form id="menuForm">
          <p:growl id="messages" autoUpdate="true"/>
 
          <p:menubar hideDelay="1000">
-
-            <p:submenu label="Users" icon="pi pi-fw pi-user">
-               <p:menuitem value="Remover" icon="pi pi-fw pi-user-minus" onclick="PF('dlgRemoverUsuario').show();" type="button"/>
-               <p:menuitem value="Atualizar" icon="pi pi-fw pi-user-edit" onclick="PF('dlgAtualizar').show();" type="button"/>
-            </p:submenu>
-
             <p:submenu label="Evento" icon="pi pi-fw pi-calendar">
                <p:menuitem value="Cadastrar" icon="pi pi-fw pi-plus" onclick="PF('dlgCadastrarEvento').show();" type="button"/>
             </p:submenu>
 
             <p:divider layout="vertical"/>
 
-            <p:menuitem value="Logout" action="#{usuarioMB.logout}" icon="pi pi-sign-out"/>
+            <p:menuitem value="Logout" action="#{loginMB.logout()}" icon="pi pi-sign-out"/>
          </p:menubar>
       </h:form>
 
-      <!-- Modal de Remover Usuário -->
-      <p:dialog header="Remover Usuário" widgetVar="dlgRemoverUsuario" modal="true" closable="true" resizable="false">
-         <h:form id="removerUsuarioForm">
-            <p:messages id="removerUsuarioMessages" showDetail="true" autoUpdate="true" />
-            <h:panelGrid columns="2">
-               <h:outputLabel for="emailRemover" value="Email: " />
-               <p:inputText id="emailRemover" value="#{usuarioMB.emailLogin}" required="true" requiredMessage="Digite o email." />
 
-               <h:outputLabel />
-               <p:commandButton value="Remover" actionListener="#{usuarioMB.removerUsuario}" onclick="PF('confirmDialogUsuario').show();" update="removerUsuarioMessages" type="button"/>
-            </h:panelGrid>
-         </h:form>
-      </p:dialog>
-
-      <!-- Diálogo de Confirmação de Usuário -->
-      <p:confirmDialog header="Confirmação" message="Tem certeza que deseja remover o usuário?" showEffect="fade" hideEffect="fade" widgetVar="confirmDialogUsuario">
-         <h:form>
-            <p:commandButton value="Sim" action="#{usuarioMB.removerUsuario()}" update=":menuForm:messages, :removerUsuarioForm:removerUsuarioMessages" oncomplete="PF('confirmDialogUsuario').hide(); PF('dlgRemoverUsuario').hide();"/>
-            <p:commandButton value="Não" onclick="PF('confirmDialogUsuario').hide();" type="button"/>
-         </h:form>
-      </p:confirmDialog>
 
       <!-- Modal de Atualizar Usuário -->
       <p:dialog header="Atualizar Usuário" widgetVar="dlgAtualizar" modal="true" closable="true" resizable="false">
@@ -66,13 +36,13 @@
             <p:messages id="atualizarMessages" showDetail="true" autoUpdate="true" />
             <h:panelGrid columns="2">
                <h:outputLabel for="emailAtualizar" value="Email: " />
-               <p:inputText id="emailAtualizar" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Digite o email." />
+               <p:inputText id="emailAtualizar" value="#{usuarioMB.usuarioSelecionado.email}" required="true" requiredMessage="Digite o email." />
 
                <h:outputLabel for="nomeAtualizar" value="Nome: " />
-               <p:inputText id="nomeAtualizar" value="#{usuarioMB.usuario.nome}" required="true" requiredMessage="Digite o nome." />
+               <p:inputText id="nomeAtualizar" value="#{usuarioMB.usuarioSelecionado.nome}" required="true" requiredMessage="Digite o nome." />
 
                <h:outputLabel for="senhaAtualizar" value="Senha: " />
-               <p:password id="senhaAtualizar" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Digite a senha." />
+               <p:password id="senhaAtualizar" value="#{usuarioMB.usuarioSelecionado.senha}" required="true" requiredMessage="Digite a senha." />
 
                <h:outputLabel />
                <p:commandButton value="Atualizar" action="#{usuarioMB.atualizarUsuario()}" update=":menuForm:messages, :atualizarForm:atualizarMessages" oncomplete="PF('dlgAtualizar').hide();" />

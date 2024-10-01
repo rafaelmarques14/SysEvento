@@ -22,14 +22,14 @@
       <p:panel header="Login" styleClass="login-panel">
          <p:messages id="messages" showDetail="true" autoUpdate="true" />
          <h:panelGrid columns="2">
-            <h:outputLabel for="emailLogin" value="Email:" />
-            <p:inputText id="emailLogin" value="#{usuarioMB.emailLogin}"  />
+            <h:outputLabel for="email" value="Email:" />
+            <p:inputText id="email" value="#{loginMB.email}"  />
 
-            <h:outputLabel for="senhaLogin" value="Senha:" />
-            <p:password id="senhaLogin" value="#{usuarioMB.senhaLogin}" />
+            <h:outputLabel for="senha" value="Senha:" />
+            <p:password id="senha" value="#{loginMB.senha}" />
 
             <h:outputLabel />
-            <p:commandButton value="Login" action="#{usuarioMB.login}" icon="pi pi-sign-in" update="messages" />
+            <p:commandButton value="Login" action="#{loginMB.login}" icon="pi pi-sign-in" update="messages" />
 
             <h:outputLabel />
             <h:panelGroup>
@@ -49,10 +49,10 @@
             <p:inputText id="nome" value="#{usuarioMB.usuario.nome}" required="true" requiredMessage="Digite o nome." />
 
             <h:outputLabel for="email" value="Email: " />
-            <p:inputText id="email" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Digite o email." />
+            <p:inputText id="emailcad" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Digite o email." />
 
             <h:outputLabel for="senha" value="Senha: " />
-            <p:password id="senha" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Digite a senha." />
+            <p:password id="senhacad" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Digite a senha." />
 
             <h:outputLabel value="Perfil:" />
             <h:selectOneRadio value="#{usuarioMB.perfil}" required="true">
@@ -61,7 +61,7 @@
             </h:selectOneRadio>
 
             <h:outputLabel />
-            <p:commandButton value="Cadastrar" action="#{usuarioMB.adicionarUsuario()}" update="cadastroMessages" oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
+            <p:commandButton value="Cadastrar" action="#{usuarioMB.criarUsuario()}" update="cadastroMessages" oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
          </h:panelGrid>
       </h:form>
    </p:dialog>
