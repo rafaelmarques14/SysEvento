@@ -9,7 +9,7 @@ import dsc.model.entidades.Usuario;
 import dsc.model.sessionBeans.UsuarioBean;
 import jakarta.annotation.security.DeclareRoles;
 import jakarta.ejb.EJB;
-import jakarta.enterprise.context.SessionScoped; // Alterado de ApplicationScoped
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
@@ -18,9 +18,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Named
-@SessionScoped // Alterado de @ApplicationScoped para @SessionScoped
+@SessionScoped
 @DeclareRoles({ "user", "admin" })
-public class LoginMB implements Serializable { // Implementa Serializable
+public class LoginMB implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EJB
@@ -37,18 +37,18 @@ public class LoginMB implements Serializable { // Implementa Serializable
         try {
             request.login(email, senha);
         } catch (ServletException e) {
-            // Adiciona uma mensagem de erro ao FacesContext
+
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Login falhou: " + e.getMessage(), "Verifique seu e-mail e senha."));
-            return "login.xhtml"; // Redireciona para a página de login
+            return "login.xhtml";
         }
 
         Principal principal = request.getUserPrincipal();
         if (principal == null) {
-            // Se principal for nulo, significa que o login falhou
+
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Login falhou", "Usuário não encontrado."));
-            return "login.xhtml"; // Redireciona para a página de login
+            return "login.xhtml";
         }
 
         String userEmail = principal.getName();
@@ -75,10 +75,8 @@ public class LoginMB implements Serializable { // Implementa Serializable
         try {
             request.logout();
 
-            // Invalida a sessão para garantir que todos os dados da sessão sejam removidos
             externalContext.invalidateSession();
 
-            // Força o recarregamento da página atual
             externalContext.redirect(request.getRequestURI());
 
         } catch (ServletException e) {

@@ -27,7 +27,7 @@ public class UsuarioMB implements Serializable {
     private Usuario usuario;
     private String id;
     private Usuario usuarioSelecionado = new Usuario();
-    private String perfil; // Campo para armazenar o perfil do usuário
+    private String perfil;
 
     public UsuarioMB() {
         this.usuario = new Usuario();
@@ -36,29 +36,29 @@ public class UsuarioMB implements Serializable {
     public String criarUsuario() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         try {
             UsuarioPerfil usuarioPerfil = new UsuarioPerfil();
-            usuarioPerfil.setPerfil(this.perfil); // Definindo o perfil
+            usuarioPerfil.setPerfil(this.perfil);
             usuarioPerfil.setEmail(usuario.getEmail());
 
             usuarioSessionBean.criarUsuario(usuario, usuarioPerfil);
-            usuario = new Usuario(); // Limpa o usuário após a criação
+            usuario = new Usuario();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuário criado com sucesso!", null));
         } catch (IllegalArgumentException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), null));
-            return null; // Retorna null em caso de erro
+            return null;
         }
-        return "home?faces-redirect=true"; // Redireciona para a página inicial
+        return "login?faces-redirect=true";
     }
 
     public String carregarUsuarioParaEdicao(String id) {
         this.usuarioSelecionado = usuarioSessionBean.buscarUsuarioPorId(id);
         if (this.usuarioSelecionado != null) {
-            return null; // Sucesso ao carregar
+            return null;
         } else {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao carregar usuário para edição.", null));
-            return "usuarios?faces-redirect=true"; // Erro ao carregar
+            return "usuarios?faces-redirect=true";
         }
     }
 
@@ -67,11 +67,11 @@ public class UsuarioMB implements Serializable {
             usuarioSessionBean.atualizarUsuario(usuarioSelecionado);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuário atualizado com sucesso!", null));
-            return "usuarios?faces-redirect=true"; // Redireciona para a lista de usuários
+            return "usuarios?faces-redirect=true";
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao atualizar usuário: " + e.getMessage(), null));
-            return null; // Retorna null em caso de erro
+            return null;
         }
     }
 
@@ -83,9 +83,9 @@ public class UsuarioMB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao remover usuário: " + e.getMessage(), null));
-            return null; // Retorna null em caso de erro
+            return null;
         }
-        return "usuarios?faces-redirect=true"; // Redireciona para a lista de usuários
+        return "usuarios?faces-redirect=true";
     }
 
     public Usuario buscarUsuario() {

@@ -13,28 +13,43 @@
         .button-grid .ui-button {
             margin: 5px;
         }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .titulo-principal {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .subtitulo {
+            font-size: 1.5em;
+            color: #555;
+        }
     </style>
 </h:head>
 <h:body>
     <p:growl id="messages" showDetail="true" />
+    <div class="card">
+        <h:form id="menuForm">
+            <p:menubar hideDelay="1000">
+                <p:menuitem value="Adicionar" icon="pi pi-fw pi-user-plus" onclick="PF('dlgCadastro').show();" type="button"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="Logout" action="#{loginMB.logout}" icon="pi pi-sign-out"/>
+            </p:menubar>
+        </h:form>
+    </div>
 
     <div class="header">
-        <h2>Gerenciamento de Usuários</h2>
-        <h2>
+        <h2 class="titulo-principal">Gerenciamento de Usuários</h2>
+        <h2 class="subtitulo">
             Bem-vindo,
             <h:outputText value="#{loginMB.usuarioLogado.nome}" />
             !
         </h2>
-    </div>
-
-    <div class="content">
-        <p:panelGrid columns="2" styleClass="button-grid">
-            <p:commandButton value="Adicionar Usuário"
-                             onclick="PF('dlgCadastro').show()" styleClass="ui-button-primary" />
-
-            <p:commandButton value="Logout" action="#{loginMB.logout}"
-                             styleClass="ui-button-secondary"/>
-        </p:panelGrid>
     </div>
 
     <h3>Lista de Usuários</h3>
@@ -67,20 +82,20 @@
             </p:column>
 
             <p:column headerText="Ações">
-                <p:commandButton icon="pi pi-trash"
-                                 action="#{usuarioMB.removerUsuario(usuario.id)}"
-                                 update=":formUsuarios:tabelaUsuarios, :messages" />
-
                 <p:commandButton icon="pi pi-pencil"
                                  action="#{usuarioMB.carregarUsuarioParaEdicao(usuario.id)}"
                                  update=":formEdicao, :messages"
                                  oncomplete="PF('modalEdicao').show()" />
 
+                <p:commandButton icon="pi pi-trash"
+                                 action="#{usuarioMB.removerUsuario(usuario.id)}"
+                                 update=":formUsuarios:tabelaUsuarios, :messages"
+                                 styleClass="ui-button-danger"/>
             </p:column>
         </p:dataTable>
     </h:form>
 
-     <!-- Modal de Cadastro -->
+    <!-- Modal de Cadastro -->
     <p:dialog header="Cadastro de Usuário" widgetVar="dlgCadastro" modal="true" closable="true" resizable="false">
         <h:form id="cadastroForm">
             <p:messages id="cadastroMessages" showDetail="true" autoUpdate="true" />
@@ -88,11 +103,11 @@
                 <h:outputLabel for="nome" value="Nome: " />
                 <p:inputText id="nome" value="#{usuarioMB.usuario.nome}" required="true" requiredMessage="Digite o nome." />
 
-                <h:outputLabel for="emailcad" value="Email: " />
-                <p:inputText id="emailcad" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Digite o email." />
+                <h:outputLabel for="email" value="Email: " />
+                <p:inputText id="email" value="#{usuarioMB.usuario.email}" required="true" requiredMessage="Digite o email." />
 
-                <h:outputLabel for="senhacad" value="Senha: " />
-                <p:password id="senhacad" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Digite a senha." />
+                <h:outputLabel for="senha" value="Senha: " />
+                <p:password id="senha" value="#{usuarioMB.usuario.senha}" required="true" requiredMessage="Digite a senha." />
 
                 <h:outputLabel value="Perfil:" />
                 <h:selectOneRadio value="#{usuarioMB.perfil}" required="true">
@@ -101,30 +116,43 @@
                 </h:selectOneRadio>
 
                 <h:outputLabel />
-                <p:commandButton value="Cadastrar" action="#{usuarioMB.criarUsuario}" update="cadastroMessages" oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
+                <p:commandButton value="Cadastrar"
+                                 action="#{usuarioMB.criarUsuario()}"
+                                 update=":formUsuarios:tabelaUsuarios, cadastroMessages"
+                                 oncomplete="if (!args.validationFailed) PF('dlgCadastro').hide();" />
             </h:panelGrid>
         </h:form>
     </p:dialog>
 
-    <!-- Modal de Edição -->
-    <p:dialog header="Edição de Usuário" widgetVar="modalEdicao" modal="true" closable="true" resizable="false">
+    <!-- Modal para Edição de Usuário -->
+    <p:dialog header="Editar Usuário" widgetVar="modalEdicao" modal="true" closable="true" resizable="false">
         <h:form id="formEdicao">
             <p:messages id="edicaoMessages" showDetail="true" autoUpdate="true" />
             <h:panelGrid columns="2">
-                <h:outputLabel for="nomeEdicao" value="Nome: " />
-                <p:inputText id="nomeEdicao" value="#{usuarioMB.usuarioSelecionado.nome}" required="true" requiredMessage="Digite o nome." />
 
-                <h:outputLabel for="emailEdicao" value="Email: " />
-                <p:inputText id="emailEdicao" value="#{usuarioMB.usuarioSelecionado.email}" required="true" requiredMessage="Digite o email." />
+                <p:outputLabel></p:outputLabel>
+                <h:inputHidden id="IDEdicao"
+                               value="#{usuarioMB.usuarioSelecionado.id}" />
 
-                <h:outputLabel />
-                <p:commandButton value="Atualizar" action="#{usuarioMB.atualizarUsuario}"
-                                 update=":formUsuarios:tabelaUsuarios, edicaoMessages"
+                <p:outputLabel for="nomeEdicao" value="Nome:" />
+                <p:inputText id="nomeEdicao"
+                             value="#{usuarioMB.usuarioSelecionado.nome}" required="true" requiredMessage="Digite o nome." />
+
+                <p:outputLabel for="emailEdicao" value="Email:" />
+                <p:inputText id="emailEdicao"
+                             value="#{usuarioMB.usuarioSelecionado.email}" required="true" requiredMessage="Digite o email." />
+
+                <p:outputLabel for="senhaEdicao" value="Senha:" />
+                <p:password id="senhaEdicao"
+                            value="#{usuarioMB.usuarioSelecionado.senha}" required="true" requiredMessage="Digite a senha." />
+
+
+                <p:commandButton value="Salvar"
+                                 action="#{usuarioMB.atualizarUsuario}"
+                                 update=":formUsuarios:tabelaUsuarios, :messages"
                                  oncomplete="if (!args.validationFailed) PF('modalEdicao').hide();" />
             </h:panelGrid>
         </h:form>
     </p:dialog>
-
-
 </h:body>
 </html>
