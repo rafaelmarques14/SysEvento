@@ -2,7 +2,7 @@ package dsc.model.repositorio;
 
 import dsc.model.entidades.Usuario;
 import dsc.model.entidades.UsuarioPerfil;
-import dsc.model.entidades.Evento;
+import dsc.model.entidades.Evento; // Importar a classe Evento
 import jakarta.ejb.Singleton;
 import jakarta.persistence.*;
 
@@ -59,13 +59,12 @@ public class UsuarioRepositorio {
         }
     }
 
-    public UsuarioPerfil buscarPerfilPorUsuarioEmail(String email) {
-        try {
-            return em.createQuery("SELECT p FROM UsuarioPerfil p WHERE p.email = :email", UsuarioPerfil.class)
-                    .setParameter("email", email)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+    public void removerEventosPorUsuario(String usuarioId) {
+        TypedQuery<Evento> query = em.createQuery("SELECT e FROM Evento e WHERE e.usuario.id = :usuarioId", Evento.class);
+        query.setParameter("usuarioId", usuarioId);
+        List<Evento> eventos = query.getResultList();
+        for (Evento evento : eventos) {
+            em.remove(evento);
         }
     }
 

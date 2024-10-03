@@ -57,6 +57,7 @@ public class UsuarioBean {
     public void removerUsuario(String id) {
         Usuario usuario = urep.buscarUsuarioPorId(id);
         if (usuario != null) {
+            urep.removerEventosPorUsuario(usuario.getId());
             urep.removerUsuario(id);
         }
     }
