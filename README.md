@@ -1,6 +1,6 @@
 # 📅 **Sistema de Agenda de Compromissos**
 
-[![Java](https://img.shields.io/badge/Java-11+-orange)](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
+[![Java](https://img.shields.io/badge/Java-18+-orange)](https://www.oracle.com/java/technologies/javase-jdk18-downloads.html)
 [![EJB](https://img.shields.io/badge/EJB-Enterprise-green)](https://jakarta.ee/specifications/enterprise-beans/)
 [![Glassfish](https://img.shields.io/badge/Server-GlassFish-blue)](https://javaee.github.io/glassfish/)
 [![MySQL](https://img.shields.io/badge/Database-MySQL-blue)](https://www.mysql.com/)
