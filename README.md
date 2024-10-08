@@ -4,7 +4,6 @@
 [![EJB](https://img.shields.io/badge/EJB-Enterprise-green)](https://jakarta.ee/specifications/enterprise-beans/)
 [![Glassfish](https://img.shields.io/badge/Server-GlassFish-blue)](https://javaee.github.io/glassfish/)
 [![MySQL](https://img.shields.io/badge/Database-MySQL-blue)](https://www.mysql.com/)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey)](https://opensource.org/licenses/MIT)
 
 ## **Sobre o Projeto**
 
